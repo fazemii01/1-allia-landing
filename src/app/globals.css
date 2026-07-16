@@ -1,0 +1,255 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-montserrat), "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-cursive: var(--font-pacifico), cursive;
+  --font-heading: var(--font-sans);
+  
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Ibunda.id Custom Colors (Updated to Allia Kids Blue & White) */
+  --color-white-wellme: #f8fafc;
+  --color-wellme-100: #e0f2fe;
+  --color-wellme-800: #0f2d4a;
+  --color-wellme-primary: #1c72bb;
+  --color-wellme-secondary: #56c5fc;
+  --color-wellme-secondary-light: #f0f9ff;
+  --color-insightme-100: #dcf5f0;
+  --color-insightme-primary: #00706e;
+  --color-green-primary: #7ab034;
+  --color-green-light: #f5faef;
+  --color-red-100: #ffe6e8;
+  --color-red-primary: #a8191a;
+  --color-red-light: #fceded;
+  --color-yellow-100: #f0f9ff;
+  --color-yellow-primary: #56c5fc;
+  --color-yellow-light: #f5fafd;
+  --color-workme-primary: #1c72bb;
+  --color-workme-light: #e0f2fe;
+  --color-grey-100: #fafafa;
+  --color-grey-150: #f5f5f5;
+  --color-grey-200: #e0e0e0;
+  --color-grey-300: #949494;
+  --color-grey-400: #626262;
+  --color-grey-500: #454545;
+  --color-grey-600: #252525;
+  --color-grey-caption: #7c7c7c;
+  --color-grey-bubble: #f1f3f5;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.48 0.15 245.0); /* Updated shadcn primary to blue */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Gradients (Updated to Blue and White branding) */
+  --bg-wellme-primary-gradient: linear-gradient(315deg, #0f2d4a 0%, #1c72bb 100%);
+  --bg-workme-primary-gradient: linear-gradient(315deg, #56c5fc 0%, #1c72bb 100%);
+  --bg-wellme-secondary-gradient: linear-gradient(135deg, #56c5fc 0%, #1c72bb 100%);
+  --bg-wellme-secondary-300-gradient: linear-gradient(94deg, #56c5fc 2.97%, #a5e3ff 148.02%);
+  --bg-wellme-pink-gradient: linear-gradient(315deg, #a5e3ff 0%, #1c72bb 100%);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Custom Gradients utilities */
+.bg-wellme-primary-gradient {
+  background: var(--bg-wellme-primary-gradient);
+}
+.bg-wellme-secondary-gradient {
+  background: var(--bg-wellme-secondary-gradient);
+}
+.bg-workme-primary-gradient {
+  background: var(--bg-workme-primary-gradient);
+}
+.bg-wellme-pink-gradient {
+  background: var(--bg-wellme-pink-gradient);
+}
+
+.text-workme-primary-gradient {
+  background: var(--bg-workme-primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-wellme-secondary-gradient {
+  background: var(--bg-wellme-secondary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-wellme-secondary-300-gradient {
+  background: var(--bg-wellme-secondary-300-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-wellme-primary-gradient {
+  background: var(--bg-wellme-primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-wellme-pink-gradient {
+  background: var(--bg-wellme-pink-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom backgrounds */
+.bg-header-ibunda {
+  background-image: url(/assets/img/default-header-ibunda-flip.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.bg-wave {
+  background-image: url(/assets/img/background/background-wave.webp);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.marquee-container {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.marquee-content {
+  display: flex;
+  flex-direction: row;
+  animation: logoMarquee 30s linear infinite;
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+@keyframes logoMarquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
