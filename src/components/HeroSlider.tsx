@@ -39,7 +39,7 @@ export default function HeroSlider() {
   useEffect(() => {
     async function fetchBanners() {
       try {
-        const res = await fetch("http://localhost:3001/api/banners");
+        const res = await fetch("https://backend.alliakids.com/api/banners");
         if (!res.ok) throw new Error("Gagal mengambil data banner");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
