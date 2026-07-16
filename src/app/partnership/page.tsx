@@ -272,7 +272,7 @@ export default function Partnership() {
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {collaborations[activeCollab].images.map((img, imgIdx) => (
+                  {collaborations[activeCollab].images.map((img: string, imgIdx: number) => (
                     <div key={imgIdx} className="rounded-xl overflow-hidden border border-grey-150 aspect-video shadow-sm">
                       <img src={img} className="w-full h-full object-cover" alt="Moment" />
                     </div>
