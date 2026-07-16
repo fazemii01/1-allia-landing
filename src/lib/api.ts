@@ -215,6 +215,7 @@ export interface ClientInvoice {
   status: string;
   due_date: string;
   paid_at: string | null;
+  payment_proof?: string;
   items: { description: string; amount: number }[];
   patient: {
     nama_lengkap: string;

@@ -592,8 +592,11 @@ export default function PortalOrangTua() {
                                    <button
                                      type="button"
                                      onClick={() => {
-                                       const url = inv.payment_proof.startsWith("http") ? inv.payment_proof : `http://localhost:3001${inv.payment_proof}`;
-                                       setPreviewImageUrl(url);
+                                       const proofUrl = inv.payment_proof;
+                                       if (proofUrl) {
+                                         const url = proofUrl.startsWith("http") ? proofUrl : `http://localhost:3001${proofUrl}`;
+                                         setPreviewImageUrl(url);
+                                       }
                                      }}
                                      className="text-xs text-wellme-primary hover:text-wellme-secondary underline font-bold w-fit cursor-pointer focus:outline-none"
                                    >
