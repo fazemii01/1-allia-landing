@@ -33,7 +33,7 @@ export default function Galeri() {
   const getImageUrl = (url?: string) => {
     if (!url) return "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?q=80&w=300";
     if (url.startsWith("http")) {
-      return url.replace("http://194.233.91.132:19000", "https://backend.jaribakat.com");
+      return url.replace("http://194.233.91.132:19000", "https://storage.alliago.id");
     }
     return `${BASE_IMAGE_URL}${url}`;
   };
