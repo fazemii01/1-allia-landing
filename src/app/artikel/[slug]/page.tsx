@@ -72,7 +72,9 @@ export default function ArtikelDetail({ params }: PageProps) {
 
   const getImageUrl = (url?: string) => {
     if (!url) return "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=300";
-    if (url.startsWith("http")) return url;
+    if (url.startsWith("http")) {
+      return url.replace("http://194.233.91.132:19000", "https://backend.jaribakat.com");
+    }
     return `${BASE_IMAGE_URL}${url}`;
   };
 
