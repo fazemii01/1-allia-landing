@@ -13,12 +13,13 @@ export default function CariPsikolog() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [dbPsychologists, setDbPsychologists] = useState<any[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
     async function loadTherapists() {
       try {
         const list = await therapistApi.getAll();
-        if (list && list.length > 0) {
+        if (list) {
           const mapped = list.map((item) => ({
             name: item.name,
             type: item.specialization || "Terapis Allia Kids",
@@ -31,6 +32,7 @@ export default function CariPsikolog() {
             timeSlots: ["morning", "afternoon"],
           }));
           setDbPsychologists(mapped);
+          setHasLoaded(true);
         }
       } catch (err) {
         console.warn("Backend therapists API not reachable. Using static fallback.", err);
@@ -97,7 +99,7 @@ export default function CariPsikolog() {
     },
   ];
 
-  const psychologists = dbPsychologists.length > 0 ? dbPsychologists : staticPsychologists;
+  const psychologists = hasLoaded ? dbPsychologists : staticPsychologists;
 
   const filteredPsychologists = useMemo(() => {
     return psychologists.filter((psychologist) => {

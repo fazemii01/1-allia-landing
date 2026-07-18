@@ -1,11 +1,39 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChatIcon, CalendarIcon } from "./icons";
+import { therapistApi } from "@/lib/api";
 
 export default function PsychologistSection() {
-  const psychologists = [
+  const [dbPsychologists, setDbPsychologists] = useState<any[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadTherapists() {
+      try {
+        const list = await therapistApi.getAll();
+        if (list) {
+          const mapped = list.map((item) => ({
+            name: item.name,
+            type: item.specialization || "Terapis Allia Kids",
+            rating: "5.0",
+            reviews: "10+",
+            specialties: item.bio ? item.bio.split("\n").filter(Boolean) : ["Terapis Berlisensi"],
+            avatar: item.photo_url || "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-male.webp",
+            services: ["Offline"],
+          }));
+          setDbPsychologists(mapped.slice(0, 3));
+          setHasLoaded(true);
+        }
+      } catch (err) {
+        console.warn("Backend therapists API not reachable. Using static fallback.", err);
+      }
+    }
+    loadTherapists();
+  }, []);
+
+  const staticPsychologists = [
     {
       name: "Riska Amanda, M.Psi., Psikolog",
       type: "Psikolog Klinis Anak & Tumbuh Kembang",
@@ -34,6 +62,12 @@ export default function PsychologistSection() {
       services: ["Online", "Offline"],
     },
   ];
+
+  const psychologists = hasLoaded ? dbPsychologists : staticPsychologists;
+
+  if (hasLoaded && psychologists.length === 0) {
+    return null; // Hide the section if therapists are intentionally cleared from backend
+  }
 
   return (
     <section className="container mx-auto px-4 lg:px-10 mb-32">
