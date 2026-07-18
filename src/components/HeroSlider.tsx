@@ -19,13 +19,19 @@ export default function HeroSlider() {
         if (!res.ok) throw new Error("Gagal mengambil data banner");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
+          const normalizeUrl = (url: string) => {
+            if (!url) return url;
+            return url
+              .replace('http://194.233.91.132:19000', 'https://storage.alliago.id')
+              .replace('http://storage.alliago.id', 'https://storage.alliago.id');
+          };
           const mapped = data
             .filter((b: any) => b.is_active)
             .map((b: any) => ({
-              href: b.href || "#",
-              bgImage: b.image_url,
-              mobileImage: b.mobile_image_url || b.image_url,
-              fallbackBgImage: b.image_url,
+              href: b.href || '#',
+              bgImage: normalizeUrl(b.image_url),
+              mobileImage: normalizeUrl(b.mobile_image_url || b.image_url),
+              fallbackBgImage: normalizeUrl(b.image_url),
             }));
           setSlides(mapped);
         }
