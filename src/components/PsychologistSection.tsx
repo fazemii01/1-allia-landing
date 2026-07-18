@@ -5,8 +5,18 @@ import Link from "next/link";
 import { ChatIcon, CalendarIcon } from "./icons";
 import { therapistApi } from "@/lib/api";
 
+interface Psychologist {
+  name: string;
+  type: string;
+  rating: string;
+  reviews: string;
+  specialties: string[];
+  avatar: string;
+  services: string[];
+}
+
 export default function PsychologistSection() {
-  const [dbPsychologists, setDbPsychologists] = useState<any[]>([]);
+  const [dbPsychologists, setDbPsychologists] = useState<Psychologist[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
@@ -14,7 +24,7 @@ export default function PsychologistSection() {
       try {
         const list = await therapistApi.getAll();
         if (list) {
-          const mapped = list.map((item) => ({
+          const mapped: Psychologist[] = list.map((item) => ({
             name: item.name,
             type: item.specialization || "Terapis Allia Kids",
             rating: "5.0",
@@ -33,7 +43,7 @@ export default function PsychologistSection() {
     loadTherapists();
   }, []);
 
-  const staticPsychologists = [
+  const staticPsychologists: Psychologist[] = [
     {
       name: "Riska Amanda, M.Psi., Psikolog",
       type: "Psikolog Klinis Anak & Tumbuh Kembang",
