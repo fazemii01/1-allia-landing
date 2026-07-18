@@ -18,6 +18,7 @@ interface Psychologist {
 export default function PsychologistSection() {
   const [dbPsychologists, setDbPsychologists] = useState<Psychologist[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
 
   useEffect(() => {
     async function loadTherapists() {
@@ -39,7 +40,7 @@ export default function PsychologistSection() {
             avatar: normalizeUrl(item.photo_url) || "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-male.webp",
             services: ["Offline"],
           }));
-          setDbPsychologists(mapped.slice(0, 3));
+          setDbPsychologists(mapped);
           setHasLoaded(true);
         }
       } catch (err) {
@@ -49,7 +50,25 @@ export default function PsychologistSection() {
     loadTherapists();
   }, []);
 
-  const psychologists = dbPsychologists;
+  useEffect(() => {
+    if (dbPsychologists.length <= 3) return;
+    const timer = setInterval(() => {
+      setStartIndex((prev) => (prev + 1) % dbPsychologists.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [dbPsychologists.length]);
+
+  const getVisiblePsychologists = () => {
+    if (dbPsychologists.length <= 3) return dbPsychologists;
+    const visible = [];
+    for (let i = 0; i < 3; i++) {
+      const idx = (startIndex + i) % dbPsychologists.length;
+      visible.push(dbPsychologists[idx]);
+    }
+    return visible;
+  };
+
+  const psychologists = getVisiblePsychologists();
 
   if (!hasLoaded || psychologists.length === 0) {
     return null; // Hide the section if therapists are empty or not yet loaded from backend
@@ -142,6 +161,23 @@ export default function PsychologistSection() {
           </div>
         ))}
       </div>
+
+      {/* Pagination indicators */}
+      {dbPsychologists.length > 3 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          {dbPsychologists.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setStartIndex(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === startIndex ? "w-6 bg-wellme-primary" : "w-2 bg-neutral-200"
+              }`}
+              aria-label={`Go to therapist slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

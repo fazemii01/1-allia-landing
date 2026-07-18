@@ -60,7 +60,7 @@ export default function HeroSlider() {
   };
 
   return (
-    <header className="-mt-20 relative w-full h-[40dvh] sm:h-[60dvh] lg:h-[88dvh] overflow-hidden bg-neutral-100">
+    <header className="-mt-20 relative w-full h-[95dvh] sm:h-[80dvh] lg:h-[88dvh] overflow-hidden bg-neutral-100">
       {/* Loading skeleton */}
       {loading && (
         <div className="absolute inset-0 bg-neutral-200 animate-pulse" />
