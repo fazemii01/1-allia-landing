@@ -7,6 +7,13 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { layananApi, LayananItem } from "@/lib/api";
 
+const normalizeUrl = (url: string | undefined) => {
+  if (!url) return '';
+  return url
+    .replace('http://194.233.91.132:19000', 'https://storage.alliago.id')
+    .replace('http://storage.alliago.id', 'https://storage.alliago.id');
+};
+
 export default function DynamicLayananPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -98,7 +105,7 @@ export default function DynamicLayananPage() {
               <div className="lg:col-span-5 flex justify-center">
                 <div className="w-full max-w-[420px] rounded-3xl overflow-hidden shadow-lg border border-white aspect-[4/3]">
                   <img
-                    src={layanan.image_url || "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600"}
+                    src={normalizeUrl(layanan.image_url) || "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600"}
                     alt={layanan.title}
                     className="w-full h-full object-cover"
                   />

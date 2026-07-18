@@ -24,13 +24,19 @@ export default function PsychologistSection() {
       try {
         const list = await therapistApi.getAll();
         if (list) {
+          const normalizeUrl = (url: string) => {
+            if (!url) return url;
+            return url
+              .replace('http://194.233.91.132:19000', 'https://storage.alliago.id')
+              .replace('http://storage.alliago.id', 'https://storage.alliago.id');
+          };
           const mapped: Psychologist[] = list.map((item) => ({
             name: item.name,
             type: item.specialization || "Terapis Allia Kids",
             rating: "5.0",
             reviews: "10+",
             specialties: item.bio ? item.bio.split("\n").filter(Boolean) : ["Terapis Berlisensi"],
-            avatar: item.photo_url || "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-male.webp",
+            avatar: normalizeUrl(item.photo_url) || "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-male.webp",
             services: ["Offline"],
           }));
           setDbPsychologists(mapped.slice(0, 3));
