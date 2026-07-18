@@ -152,7 +152,7 @@ export default function DynamicLayananPage() {
                       <div className="text-sm font-extrabold text-wellme-secondary">{prog.harga}</div>
                     </div>
                     <a
-                      href={`https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20booking%20sesi%20${encodeURIComponent(prog.title)}%20untuk%20anak%20saya.`}
+                      href={`https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20booking%20sesi%20${encodeURIComponent(prog.title)}%20untuk%20anak%20saya.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full mt-5 text-center text-xs font-bold py-2.5 rounded-full border border-wellme-secondary text-wellme-secondary hover:bg-wellme-secondary hover:text-white transition-all duration-200"

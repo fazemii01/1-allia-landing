@@ -43,40 +43,10 @@ export default function PsychologistSection() {
     loadTherapists();
   }, []);
 
-  const staticPsychologists: Psychologist[] = [
-    {
-      name: "Riska Amanda, M.Psi., Psikolog",
-      type: "Psikolog Klinis Anak & Tumbuh Kembang",
-      rating: "4.9",
-      reviews: "150+",
-      specialties: ["Tantrum & Emosi", "Fobia Makanan / GTM", "Trauma Anak"],
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Riska",
-      services: ["Online", "Offline"],
-    },
-    {
-      name: "Budi Satria, S.Tr.T.W.",
-      type: "Terapis Wicara & Wicara Anak",
-      rating: "5.0",
-      reviews: "210+",
-      specialties: ["Speech Delay", "Kesulitan Artikulasi", "Gagap Berbicara"],
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Budi",
-      services: ["Offline"],
-    },
-    {
-      name: "Siti Rahma, S.Psi.",
-      type: "Terapis Perilaku & Anak Berkebutuhan Khusus",
-      rating: "4.9",
-      reviews: "185+",
-      specialties: ["Fokus & ADHD/ADD", "Modifikasi Perilaku", "Sosialisasi Anak"],
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Siti",
-      services: ["Online", "Offline"],
-    },
-  ];
+  const psychologists = dbPsychologists;
 
-  const psychologists = hasLoaded ? dbPsychologists : staticPsychologists;
-
-  if (hasLoaded && psychologists.length === 0) {
-    return null; // Hide the section if therapists are intentionally cleared from backend
+  if (!hasLoaded || psychologists.length === 0) {
+    return null; // Hide the section if therapists are empty or not yet loaded from backend
   }
 
   return (

@@ -52,10 +52,10 @@ export default function ContactPage() {
                 Senin - Sabtu (08:00 - 17:00 WIB)
               </p>
               <a
-                href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20berkonsultasi"
+                href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20berkonsultasi"
                 className="text-sm font-bold text-wellme-primary hover:underline"
               >
-                081334455616
+                085138511348
               </a>
             </div>
 
@@ -100,7 +100,7 @@ export default function ContactPage() {
               Anda tidak perlu menunggu lama. Klik tombol di bawah untuk langsung terhubung dengan WhatsApp Admin kami sekarang juga.
             </p>
             <a
-              href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20bertanya%20tentang%20layanan%20terapi%20dan%2520konsultasi"
+              href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20bertanya%20tentang%20layanan%20terapi%20dan%2520konsultasi"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-wellme-secondary-gradient hover:brightness-105 text-white font-bold px-8 py-3.5 rounded-full text-xs shadow-md transition-all cursor-pointer"

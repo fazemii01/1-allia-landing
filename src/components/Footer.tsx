@@ -47,7 +47,7 @@ export default function Footer() {
             </p>
             <div className="text-sm font-semibold text-grey-300">
               <div className="mb-1">Email: <span className="text-white">halo@alliakids.com</span></div>
-              <div className="mb-1">WhatsApp: <span className="text-white">+62 813-3445-5616</span></div>
+              <div className="mb-1">WhatsApp: <span className="text-white">+62 851-3851-1348</span></div>
               <div className="leading-relaxed">
                 Alamat: <span className="text-white font-normal text-xs block mt-1">Perum Adara Park 2, Blok D17, Karanganyar, Kabuaran, Kec. Kunir, Kabupaten Lumajang, Jawa Timur 67383</span>
               </div>

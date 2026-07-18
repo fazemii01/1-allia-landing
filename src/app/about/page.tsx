@@ -153,7 +153,7 @@ export default function AboutPage() {
                 Booking Sesi Sekarang
               </Link>
               <a
-                href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20berkonsultasi%20mengenai%20layanan%20terapi"
+                href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20berkonsultasi%20mengenai%20layanan%20terapi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white/10 hover:bg-white/15 text-white border border-white/20 font-bold px-8 py-3.5 rounded-full text-sm transition-all flex items-center gap-2 cursor-pointer"

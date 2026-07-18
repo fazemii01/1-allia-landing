@@ -110,7 +110,7 @@ export default function BukuSaku() {
                       </a>
                     ) : (
                       <a
-                        href={`https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20mengunduh%20E-Book%20${encodeURIComponent(book.title)}.`}
+                        href={`https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20mengunduh%20E-Book%20${encodeURIComponent(book.title)}.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full mt-6 text-center rounded-full bg-wellme-secondary-gradient hover:bg-wellme-primary-gradient text-white font-bold py-3 transition-all duration-300 shadow"

@@ -341,7 +341,7 @@ export default function ArtikelDetail({ params }: PageProps) {
                 </p>
                 <hr className="border-white/20" />
                 <a
-                  href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20berkonsultasi%20mengenai%20tumbuh%20kembang%20anak."
+                  href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20berkonsultasi%20mengenai%20tumbuh%20kembang%20anak."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-full bg-white hover:bg-wellme-secondary-light text-wellme-primary font-bold py-3.5 text-center transition-all duration-300 shadow-md hover:scale-102 flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"

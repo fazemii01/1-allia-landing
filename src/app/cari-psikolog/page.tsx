@@ -41,65 +41,7 @@ export default function CariPsikolog() {
     loadTherapists();
   }, []);
 
-  const staticPsychologists = [
-    {
-      name: "Riska Amanda, M.Psi., Psikolog",
-      type: "Psikolog Klinis Anak & Tumbuh Kembang",
-      rating: "4.9",
-      reviews: "150+",
-      specialties: ["Tantrum & Emosi", "Fobia Makanan / GTM", "Trauma Anak"],
-      avatar: "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-female.webp",
-      services: ["Online", "Offline"],
-      days: ["senin", "selasa", "kamis"],
-      timeSlots: ["morning", "afternoon"],
-    },
-    {
-      name: "Budi Satria, S.Tr.T.W.",
-      type: "Terapis Wicara & Wicara Anak",
-      rating: "5.0",
-      reviews: "210+",
-      specialties: ["Speech Delay", "Kesulitan Artikulasi", "Gagap Berbicara"],
-      avatar: "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-male.webp",
-      services: ["Offline"],
-      days: ["rabu", "kamis", "jumat"],
-      timeSlots: ["afternoon", "evening"],
-    },
-    {
-      name: "Siti Rahma, S.Psi.",
-      type: "Terapis Perilaku & Anak Berkebutuhan Khusus",
-      rating: "4.9",
-      reviews: "185+",
-      specialties: ["Fokus & ADHD/ADD", "Modifikasi Perilaku", "Sosialisasi Anak"],
-      avatar: "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-female.webp",
-      services: ["Online", "Offline"],
-      days: ["senin", "rabu", "sabtu"],
-      timeSlots: ["morning", "evening"],
-    },
-    {
-      name: "Diana Lestari, M.Psi., Psikolog",
-      type: "Psikolog Klinis Anak & Remaja",
-      rating: "4.8",
-      reviews: "95+",
-      specialties: ["Tumbuh Kembang", "Kesulitan Belajar", "Adiksi Gadget"],
-      avatar: "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-female.webp",
-      services: ["Offline"],
-      days: ["selasa", "jumat", "sabtu"],
-      timeSlots: ["afternoon"],
-    },
-    {
-      name: "Hendra Wijaya, C.Ht.",
-      type: "Praktisi Hipnoterapi Anak & Dewasa",
-      rating: "4.9",
-      reviews: "160+",
-      specialties: ["Fobia Makan/Nasi", "Trauma & Fobia", "Kecemasan & Motivasi"],
-      avatar: "https://storage.googleapis.com/pendaftaran-production/assets/v6/psikolog-placeholder-male.webp",
-      services: ["Online", "Offline"],
-      days: ["senin", "kamis", "minggu"],
-      timeSlots: ["evening"],
-    },
-  ];
-
-  const psychologists = hasLoaded ? dbPsychologists : staticPsychologists;
+  const psychologists = dbPsychologists;
 
   const filteredPsychologists = useMemo(() => {
     return psychologists.filter((psychologist) => {

@@ -45,7 +45,7 @@ export default function ApplySuccessPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
               <a
-                href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20sudah%20mengisi%20formulir%20pendaftaran%20online."
+                href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20sudah%20mengisi%20formulir%20pendaftaran%20online."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 rounded-xl bg-wellme-secondary-gradient hover:bg-wellme-primary-gradient text-white font-bold py-3 text-sm shadow transition-all hover:scale-102 flex items-center justify-center gap-2 cursor-pointer"

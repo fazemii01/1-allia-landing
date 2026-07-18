@@ -4,6 +4,50 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDownIcon, CloseIcon, HomeIcon, EditIcon, CalendarIcon, ClipboardIcon, ChatIcon, LayananIndividualIcon, LayananCoupleIcon, LayananFamilyIcon, LayananMhcuIcon, LayananHipnoterapiIcon, LayananOnlineIcon, EdukasiCekIcon, EdukasiBukuIcon, EdukasiArtikelIcon, EdukasiGaleriIcon } from "./icons";
 
+const STATIC_SERVICES = [
+  {
+    title: "Hipnoterapi Anak & Dewasa",
+    description: "Mengatasi trauma, kecemasan, fobia makanan (takut nasi), ngompol, dan meningkatkan motivasi belajar.",
+    icon: LayananHipnoterapiIcon,
+    href: "/layanan/hipnoterapi-anak",
+  },
+  {
+    title: "Terapi Wicara",
+    description: "Pendampingan untuk anak dengan keterlambatan wicara (speech delay), artikulasi, dan gangguan komunikasi.",
+    icon: LayananIndividualIcon,
+    href: "/layanan/terapi-wicara",
+  },
+  {
+    title: "Terapi Perilaku",
+    description: "Terapi pembiasaan positif untuk anak dengan hiperaktivitas, tantrum, ADHD/ADD, dan Autisme.",
+    icon: LayananCoupleIcon,
+    href: "/layanan/terapi-perilaku",
+  },
+  {
+    title: "Skrining Tumbuh Kembang",
+    description: "Evaluasi milestone perkembangan motorik, sensorik, kognitif, dan sosial-emosional anak usia 1-5 tahun.",
+    icon: LayananFamilyIcon,
+    href: "/layanan/tumbuh-kembang",
+  },
+  {
+    title: "Analisis Sidik Jari Bakat",
+    description: "Asesmen potensi kecerdasan majemuk, bakat bawaan, serta gaya belajar optimal anak sejak dini.",
+    icon: LayananMhcuIcon,
+    href: "/layanan/sidik-jari-bakat",
+  },
+];
+
+function getServiceIcon(slug: string) {
+  const s = slug.toLowerCase();
+  if (s.includes("hipnoterapi") || s.includes("nasi") || s.includes("takut")) return LayananHipnoterapiIcon;
+  if (s.includes("wicara")) return LayananIndividualIcon;
+  if (s.includes("perilaku")) return LayananCoupleIcon;
+  if (s.includes("tumbuh-kembang") || s.includes("skrining")) return LayananFamilyIcon;
+  if (s.includes("sidik-jari") || s.includes("bakat") || s.includes("analisis")) return LayananMhcuIcon;
+  if (s.includes("jari-matik") || s.includes("magic") || s.includes("bimbel")) return LayananOnlineIcon;
+  return LayananIndividualIcon;
+}
+
 export default function Navbar() {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isEducationOpen, setIsEducationOpen] = useState(false);
@@ -12,7 +56,6 @@ export default function Navbar() {
   const [pName, setPName] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const educationRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       const logged = localStorage.getItem("isLoggedIn");
@@ -38,44 +81,30 @@ export default function Navbar() {
     };
   }, []);
 
-  const services = [
-    {
-      title: "Hipnoterapi Anak & Dewasa",
-      description: "Mengatasi trauma, kecemasan, fobia makanan (takut nasi), ngompol, dan meningkatkan motivasi belajar.",
-      icon: LayananHipnoterapiIcon,
-      href: "/layanan/hipnoterapi-anak",
-    },
-    {
-      title: "Terapi Wicara",
-      description: "Pendampingan untuk anak dengan keterlambatan wicara (speech delay), artikulasi, dan gangguan komunikasi.",
-      icon: LayananIndividualIcon,
-      href: "/layanan/terapi-wicara",
-    },
-    {
-      title: "Terapi Perilaku",
-      description: "Terapi pembiasaan positif untuk anak dengan hiperaktivitas, tantrum, ADHD/ADD, dan Autisme.",
-      icon: LayananCoupleIcon,
-      href: "/layanan/terapi-perilaku",
-    },
-    {
-      title: "Skrining Tumbuh Kembang",
-      description: "Evaluasi milestone perkembangan motorik, sensorik, kognitif, dan sosial-emosional anak usia 1-5 tahun.",
-      icon: LayananFamilyIcon,
-      href: "/layanan/tumbuh-kembang",
-    },
-    {
-      title: "Analisis Sidik Jari Bakat",
-      description: "Asesmen potensi kecerdasan majemuk, bakat bawaan, serta gaya belajar optimal anak sejak dini.",
-      icon: LayananMhcuIcon,
-      href: "/layanan/sidik-jari-bakat",
-    },
-    {
-      title: "Bimbel Jari Matik Magic",
-      description: "Metode berhitung cepat menggunakan 10 jari tangan secara praktis, mudah, dan menyenangkan bagi anak.",
-      icon: LayananOnlineIcon,
-      href: "/layanan/jari-matik-magic",
-    },
-  ];
+  const [services, setServices] = useState<any[]>(STATIC_SERVICES);
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:9000";
+        const res = await fetch(`${apiUrl}/api/layanan`);
+        if (!res.ok) throw new Error("Gagal mengambil data layanan");
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((item: any) => ({
+            title: item.title,
+            description: item.description,
+            icon: getServiceIcon(item.slug),
+            href: `/layanan/${item.slug}`,
+          }));
+          setServices(mapped);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil layanan dinamis di Navbar, menggunakan fallback statis:", err);
+      }
+    }
+    fetchServices();
+  }, []);
 
   const educationItems = [
     {
@@ -402,7 +431,7 @@ export default function Navbar() {
           </div>
           <div className="col-span-1">
             <a
-              href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20bertanya%20tentang%20layanan%20terapi%20dan%20konsultasi"
+              href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20ingin%20bertanya%20tentang%20layanan%20terapi%20dan%20konsultasi"
               target="_blank"
               rel="noopener noreferrer"
               className="text-grey-400 hover:text-wellme-primary flex flex-col items-center justify-center text-center gap-1"

@@ -4,54 +4,35 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
-const STATIC_SLIDES = [
-  {
-    href: "https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids",
-    bgImage: "/assets/img/banner/announcement-1.png",
-    fallbackBgImage: "https://alliakids.com/wp-content/uploads/2025/09/Tidak-Ada-Akun-Admin-Tidak-Ada-Rekapan-Tidak-Pernah-DM-atau.png"
-  },
-  {
-    href: "https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids",
-    bgImage: "/assets/img/banner/announcement-2.png",
-    fallbackBgImage: "https://alliakids.com/wp-content/uploads/2026/02/Tidak-Ada-Akun-Admin-Tidak-Ada-Rekapan-Tidak-Pernah-DM-atau-1.png"
-  },
-  {
-    href: "/apply",
-    bgImage: "/assets/img/banner/banner-1.png",
-    fallbackBgImage: "https://alliakids.com/wp-content/uploads/2026/02/1.png"
-  },
-  {
-    href: "/apply",
-    bgImage: "/assets/img/banner/banner-2.png",
-    fallbackBgImage: "https://alliakids.com/wp-content/uploads/2026/02/2.png"
-  },
-  {
-    href: "/layanan/sidik-jari-bakat",
-    bgImage: "/assets/img/banner/banner-3.png",
-    fallbackBgImage: "https://alliakids.com/wp-content/uploads/2026/02/3.png"
-  }
-];
+const STATIC_SLIDES: never[] = [];
 
 export default function HeroSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides, setSlides] = useState<any[]>(STATIC_SLIDES);
+  const [slides, setSlides] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchBanners() {
       try {
-        const res = await fetch("https://backend.alliakids.com/api/banners");
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9000';
+        const res = await fetch(`${apiUrl}/api/banners`);
         if (!res.ok) throw new Error("Gagal mengambil data banner");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((b: any) => ({
-            href: b.href || "#",
-            bgImage: b.image_url,
-            fallbackBgImage: b.image_url,
-          }));
+          const mapped = data
+            .filter((b: any) => b.is_active)
+            .map((b: any) => ({
+              href: b.href || "#",
+              bgImage: b.image_url,
+              mobileImage: b.mobile_image_url || b.image_url,
+              fallbackBgImage: b.image_url,
+            }));
           setSlides(mapped);
         }
       } catch (err) {
-        console.error("Gagal mengambil banner dinamis, menggunakan banner statis:", err);
+        console.error("Gagal mengambil banner:", err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchBanners();
@@ -74,6 +55,10 @@ export default function HeroSlider() {
 
   return (
     <header className="-mt-20 relative w-full h-[40dvh] sm:h-[60dvh] lg:h-[88dvh] overflow-hidden bg-neutral-100">
+      {/* Loading skeleton */}
+      {loading && (
+        <div className="absolute inset-0 bg-neutral-200 animate-pulse" />
+      )}
       {/* Slide Container */}
       <div className="relative h-full w-full flex items-center z-20">
         {slides.map((slide, index) => (
@@ -86,14 +71,17 @@ export default function HeroSlider() {
                 : "opacity-0 pointer-events-none scale-102"
             }`}
           >
-            <img
-              src={slide.bgImage}
-              alt="Allia Kids Banner"
-              className="w-full h-full object-cover object-center"
-              onError={(e) => {
-                e.currentTarget.src = slide.fallbackBgImage;
-              }}
-            />
+            <picture className="w-full h-full block">
+              <source media="(max-width: 767px)" srcSet={slide.mobileImage || slide.bgImage} />
+              <img
+                src={slide.bgImage}
+                alt="Allia Kids Banner"
+                className="w-full h-full object-cover object-center"
+                onError={(e) => {
+                  e.currentTarget.src = slide.fallbackBgImage;
+                }}
+              />
+            </picture>
           </Link>
         ))}
       </div>

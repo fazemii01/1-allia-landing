@@ -13,7 +13,7 @@ export default function AppsSection() {
       description: "Dukung terapi anak di rumah dengan audio relaksasi tidur (hypnosleep) khusus untuk mengatasi fobia makanan (fobia nasi) atau kecemasan, didampingi buku panduan praktis orang tua.",
       image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600",
       btnText: "Beli / Tanya Produk",
-      btnHref: "https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20dengan%20produk%20Audio%20Hypnosleep%20dan%20Buku%20Terapi",
+      btnHref: "https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20dengan%20produk%20Audio%20Hypnosleep%20dan%20Buku%20Terapi",
       isExternal: true,
     },
     {

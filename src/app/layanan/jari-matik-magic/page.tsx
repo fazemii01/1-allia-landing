@@ -51,7 +51,7 @@ export default function JariMatikMagic() {
                     </span>
                   </div>
                   <a
-                    href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20mendaftarkan%20anak%20saya%20di%20Bimbel%20Jari%20Matik%20Magic."
+                    href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20mendaftarkan%20anak%20saya%20di%20Bimbel%20Jari%20Matik%20Magic."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-full bg-wellme-secondary-gradient hover:bg-wellme-primary-gradient text-white font-bold px-8 py-3.5 transition-all duration-300 shadow-md hover:scale-105"
@@ -116,7 +116,7 @@ export default function JariMatikMagic() {
               Jadwalkan kelas percobaan gratis (trial class) bersama instruktur Allia Kids dan lihat bagaimana si kecil berhitung dengan ceria menggunakan jarinya.
             </p>
             <a
-              href="https://api.whatsapp.com/send?phone=6281334455616&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20mengikuti%20Trial%20Class%20Jari%20Matik%20Magic."
+              href="https://api.whatsapp.com/send?phone=6285138511348&text=Halo%20Allia%20Kids%2C%20saya%20tertarik%20untuk%20mengikuti%20Trial%20Class%20Jari%20Matik%20Magic."
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-wellme-secondary-gradient hover:bg-wellme-primary-gradient text-white font-bold px-8 py-3.5 transition-all duration-300 shadow-md hover:scale-105"
