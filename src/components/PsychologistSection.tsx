@@ -24,8 +24,8 @@ export default function PsychologistSection() {
       try {
         const list = await therapistApi.getAll();
         if (list) {
-          const normalizeUrl = (url: string) => {
-            if (!url) return url;
+          const normalizeUrl = (url: string | null | undefined) => {
+            if (!url) return '';
             return url
               .replace('http://194.233.91.132:19000', 'https://storage.alliago.id')
               .replace('http://storage.alliago.id', 'https://storage.alliago.id');

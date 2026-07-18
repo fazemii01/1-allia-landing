@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { layananApi, LayananItem } from "@/lib/api";
 
-const normalizeUrl = (url: string | undefined) => {
+const normalizeUrl = (url: string | null | undefined) => {
   if (!url) return '';
   return url
     .replace('http://194.233.91.132:19000', 'https://storage.alliago.id')
