@@ -21,7 +21,7 @@ export default function StatsSection() {
   ];
 
   return (
-    <section className="container mx-auto px-4 lg:px-10 -mt-20 mb-32 relative z-30">
+    <section className="container mx-auto px-4 lg:px-10 -mt-10 mb-32 relative z-30">
       <div className="rounded-3xl bg-neutral-100/90 backdrop-blur-lg drop-shadow-xl p-8 border border-white/50">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-grey-200">
           {stats.map((stat, index) => (
