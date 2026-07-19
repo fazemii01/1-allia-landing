@@ -5,6 +5,9 @@ import StatsSection from "@/components/StatsSection";
 import ServicesSection from "@/components/ServicesSection";
 import PsychologistSection from "@/components/PsychologistSection";
 import AppsSection from "@/components/AppsSection";
+import GallerySection from "@/components/GallerySection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import ArticlesSection from "@/components/ArticlesSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -26,6 +29,15 @@ export default function Home() {
 
         {/* Psychologist Catalog and Booking */}
         <PsychologistSection />
+
+        {/* Recent Activity Gallery Preview */}
+        <GallerySection />
+
+        {/* Sincere Testimonials from Parents */}
+        <TestimonialsSection />
+
+        {/* Latest Parenting Articles Preview */}
+        <ArticlesSection />
 
         {/* App promotion and Premium Info */}
         <AppsSection />
