@@ -84,9 +84,9 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Allia Kids. Hak Cipta Dilindungi Undang-Undang.
           </div>
           <div className="flex items-center gap-4">
-            <a href="https://instagram.com/alliakids" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Facebook</a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
+            <a href="https://www.instagram.com/terapianakindonesia/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
+            <a href="https://www.tiktok.com/@allia_kids" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TikTok</a>
+            <a href="https://www.youtube.com/c/atvkids2045" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
           </div>
         </div>
       </div>
