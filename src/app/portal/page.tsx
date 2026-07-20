@@ -8,9 +8,11 @@ import {
   patientsApi, 
   appointmentsApi, 
   invoicesApi, 
+  paymentMethodsApi,
   ClientPatient, 
   ClientAppointment, 
-  ClientInvoice 
+  ClientInvoice,
+  PaymentMethodItem
 } from "@/lib/api";
 
 export default function PortalOrangTua() {
@@ -27,6 +29,7 @@ export default function PortalOrangTua() {
   const [patients, setPatients] = useState<ClientPatient[]>([]);
   const [appointments, setAppointments] = useState<ClientAppointment[]>([]);
   const [invoices, setInvoices] = useState<ClientInvoice[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>([]);
   
   // Loading & error
   const [loading, setLoading] = useState(true);
@@ -59,14 +62,16 @@ export default function PortalOrangTua() {
       async function loadPortalData() {
         try {
           setLoading(true);
-          const [pts, appts, invs] = await Promise.all([
+          const [pts, appts, invs, pms] = await Promise.all([
             patientsApi.getMyActiveTherapies(storedToken),
             appointmentsApi.getMyAppointments(storedToken),
             invoicesApi.getMyInvoices(storedToken),
+            paymentMethodsApi.getActive().catch(() => []),
           ]);
           setPatients(pts || []);
           setAppointments(appts || []);
           setInvoices(invs || []);
+          setPaymentMethods(pms || []);
         } catch (err: any) {
           console.error("Gagal memuat data portal:", err);
           setError("Gagal memuat data dari server. Silakan coba beberapa saat lagi.");
@@ -629,19 +634,34 @@ export default function PortalOrangTua() {
                           {/* Bank details */}
                           {inv.status !== 'sudah_bayar' && inv.status !== 'menunggu_verifikasi' && (
                             <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-2">
-                              <span className="text-[10px] font-bold text-wellme-primary uppercase tracking-wider">Pilihan Transfer Manual</span>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-                                <div className="bg-white border border-slate-200/60 rounded-xl p-3 flex flex-col shadow-sm">
-                                  <span className="text-[10px] text-grey-caption font-bold">BANK MANDIRI</span>
-                                  <span className="font-extrabold text-sm text-wellme-primary tracking-wide">137-00-1234567-8</span>
-                                  <span className="text-[10px] text-grey-400 font-semibold mt-0.5">a.n. Yayasan Allia Kids</span>
+                              <span className="text-[10px] font-bold text-wellme-primary uppercase tracking-wider">Pilihan Metode Pembayaran Resmi</span>
+                              {paymentMethods && paymentMethods.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                                  {paymentMethods.map((pm) => (
+                                    <div key={pm.id} className="bg-white border border-slate-200/60 rounded-xl p-3 flex flex-col justify-between gap-1 shadow-sm">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <span className="text-[10px] text-grey-caption font-bold uppercase">{pm.bank_name}</span>
+                                        {pm.icon_url && (
+                                          <img
+                                            src={pm.icon_url.startsWith('http') ? pm.icon_url : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${pm.icon_url}`}
+                                            alt={pm.bank_name}
+                                            className="h-4 w-auto object-contain max-w-[50px]"
+                                          />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <span className="font-extrabold text-sm text-wellme-primary tracking-wide font-mono select-all block">{pm.account_number}</span>
+                                        <span className="text-[10px] text-grey-400 font-semibold mt-0.5 block">a.n. {pm.account_name}</span>
+                                      </div>
+                                      {pm.instructions && (
+                                        <p className="text-[9px] text-grey-400 italic border-t border-slate-100 pt-1 mt-1 leading-tight">{pm.instructions}</p>
+                                      )}
+                                    </div>
+                                  ))}
                                 </div>
-                                <div className="bg-white border border-slate-200/60 rounded-xl p-3 flex flex-col shadow-sm">
-                                  <span className="text-[10px] text-grey-caption font-bold">BANK BCA</span>
-                                  <span className="font-extrabold text-sm text-wellme-primary tracking-wide">869-0123-456</span>
-                                  <span className="text-[10px] text-grey-400 font-semibold mt-0.5">a.n. Yayasan Allia Kids</span>
-                                </div>
-                              </div>
+                              ) : (
+                                <p className="text-xs text-grey-caption font-medium">Silakan hubungi admin untuk informasi nomor rekening transfer.</p>
+                              )}
                             </div>
                           )}
 
