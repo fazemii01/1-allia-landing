@@ -15,6 +15,29 @@ import {
   PaymentMethodItem
 } from "@/lib/api";
 
+const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
+  {
+    id: 1,
+    bank_name: "BANK BCA",
+    account_number: "8690123456",
+    account_name: "Klinik Allia Kids",
+    instructions: "Transfer sesuai nominal total tagihan",
+    icon_url: null,
+    is_active: true,
+    sort_order: 1
+  },
+  {
+    id: 2,
+    bank_name: "BANK MANDIRI",
+    account_number: "1370012345678",
+    account_name: "Klinik Allia Kids",
+    instructions: "Transfer sesuai nominal total tagihan",
+    icon_url: null,
+    is_active: true,
+    sort_order: 2
+  }
+];
+
 export default function PortalOrangTua() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"ringkasan" | "anak" | "jadwal" | "tagihan">("ringkasan");
@@ -29,7 +52,7 @@ export default function PortalOrangTua() {
   const [patients, setPatients] = useState<ClientPatient[]>([]);
   const [appointments, setAppointments] = useState<ClientAppointment[]>([]);
   const [invoices, setInvoices] = useState<ClientInvoice[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>(DEFAULT_PAYMENT_METHODS);
   
   // Loading & error
   const [loading, setLoading] = useState(true);
@@ -71,7 +94,7 @@ export default function PortalOrangTua() {
           setPatients(pts || []);
           setAppointments(appts || []);
           setInvoices(invs || []);
-          setPaymentMethods(pms || []);
+          if (pms && pms.length > 0) setPaymentMethods(pms);
         } catch (err: any) {
           console.error("Gagal memuat data portal:", err);
           setError("Gagal memuat data dari server. Silakan coba beberapa saat lagi.");

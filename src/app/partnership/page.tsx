@@ -149,10 +149,10 @@ export default function Partnership() {
               </h1>
               <div className="flex flex-col gap-4 text-base lg:text-lg font-semibold text-white/90 max-w-2xl leading-relaxed">
                 <p>
-                  Ibunda.id membuka ruang kolaborasi bagi brand, komunitas, and instansi yang ingin menghadirkan program activation atau konten edukasi kesehatan mental.
+                  Allia Kids membuka ruang kolaborasi bagi brand, sekolah, komunitas, dan instansi yang ingin menghadirkan program edukasi dan stimulasi tumbuh kembang anak.
                 </p>
                 <p>
-                  Dengan saling membersamai, kita bisa menghadirkan pengalaman yang hangat, yang membuat orang merasa ditemani, dipahami, dan tidak sendirian.
+                  Dengan saling membersamai, kita bisa menghadirkan pengalaman yang hangat, yang membuat orang tua dan anak merasa ditemani, dipahami, dan mendapat pendampingan terbaik.
                 </p>
               </div>
               <a
@@ -207,13 +207,13 @@ export default function Partnership() {
                 <img
                   className="w-full h-full object-cover"
                   src="/assets/img/gallery/partnership/why.webp"
-                  alt="Why Ibunda.id"
+                  alt="Why Allia Kids"
                 />
               </div>
             </div>
             <div className="lg:col-span-6 flex flex-col gap-6">
               <h2 className="text-wellme-primary text-2xl lg:text-3xl font-extrabold text-center lg:text-left mb-2">
-                Mengapa harus bersama Ibunda.id?
+                Mengapa Harus Berkolaborasi Bersama Allia Kids?
               </h2>
               <div className="flex flex-col gap-4">
                 {whyUs.map((item, idx) => (
@@ -295,15 +295,15 @@ export default function Partnership() {
                 <div className="flex flex-col items-center lg:items-start justify-center gap-6 text-center lg:text-start relative z-20">
                   <h2 className="text-2xl lg:text-3xl font-bold">Mari Mulai Berdiskusi</h2>
                   <div className="flex flex-col gap-3 text-sm lg:text-base lg:max-w-[50%] font-semibold text-white/90">
-                    <div>Mari bangun lebih banyak ruang aman di Indonesia. Tim Ibunda.id siap mendengar ide kolaborasimu untuk menemani lebih banyak hati yang berproses.</div>
-                    <div>Tim kami akan membantu merancang bentuk kerja sama yang paling cocok dengan brand, komunitas, maupun instansi kamu.</div>
+                    <div>Mari dukung tumbuh kembang anak Indonesia. Tim Allia Kids siap mendengar ide kolaborasimu untuk mendampingi lebih banyak keluarga dan buah hati.</div>
+                    <div>Tim kami akan membantu merancang bentuk kerja sama yang paling cocok dengan brand, sekolah, komunitas, maupun instansi kamu.</div>
                   </div>
-                  <a href="mailto:partnership@ibunda.id" className="rounded-xl bg-wellme-secondary-gradient hover:bg-wellme-primary-gradient text-sm lg:text-base text-white transition-all px-5 py-3.5 w-full lg:w-fit font-bold shadow-md">
+                  <a href="mailto:partnership@alliakids.com" className="rounded-xl bg-wellme-secondary-gradient hover:bg-wellme-primary-gradient text-sm lg:text-base text-white transition-all px-5 py-3.5 w-full lg:w-fit font-bold shadow-md">
                     <div className="flex flex-col items-center lg:items-start gap-1">
                       <div className="text-xs text-white/70">Hubungi kami melalui :</div>
                       <div className="flex items-center gap-2 font-bold text-sm lg:text-base">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="tabler-icon tabler-icon-mail"><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10"></path><path d="M3 7l9 6l9 -6"></path></svg>
-                        partnership@ibunda.id
+                        partnership@alliakids.com
                       </div>
                     </div>
                   </a>
