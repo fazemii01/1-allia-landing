@@ -298,7 +298,13 @@ const CustomDatePicker = ({ value, onChange, disabled }: { value: string; onChan
   );
 };
 
-export default function ApplyPage() {
+export const isWicaraService = (jenis: string | undefined | null): boolean => {
+  if (!jenis || typeof jenis !== "string") return false;
+  const lower = jenis.toLowerCase();
+  return lower === "terapi_wicara" || lower === "terapi-wicara" || lower.includes("wicara");
+};
+
+function ApplyPageContent() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -434,7 +440,8 @@ export default function ApplyPage() {
 
   const handleCheckboxGroupChange = (groupName: string, value: string) => {
     setFormData((prev) => {
-      const currentValues = prev[groupName as keyof typeof prev] as string[];
+      const raw = prev[groupName as keyof typeof prev];
+      const currentValues = Array.isArray(raw) ? raw : [];
       const newValues = currentValues.includes(value)
         ? currentValues.filter((item) => item !== value)
         : [...currentValues, value];
@@ -492,7 +499,7 @@ export default function ApplyPage() {
       }
     }
     if (step === 4) {
-      if (formData.jenis_terapi === "terapi_wicara" || formData.jenis_terapi.includes("wicara")) {
+      if (isWicaraService(formData.jenis_terapi)) {
         if (
           !formData.masalah_bicara ||
           !formData.sudah_berapa_lama_wicara ||
@@ -989,7 +996,7 @@ export default function ApplyPage() {
             )}
 
             {/* ==================== STEP 4A: DETAIL FORMULIR TERAPI WICARA ==================== */}
-            {step === 4 && (formData.jenis_terapi === "terapi_wicara" || formData.jenis_terapi === "terapi-wicara" || formData.jenis_terapi.includes("wicara")) && (
+            {step === 4 && isWicaraService(formData.jenis_terapi) && (
               <div className="flex flex-col gap-5">
                 <div className="border-b border-grey-100 pb-3">
                   <h3 className="text-lg font-extrabold text-wellme-primary">Formulir Khusus Terapi Wicara</h3>
@@ -1261,7 +1268,7 @@ export default function ApplyPage() {
             )}
 
             {/* ==================== STEP 4B: DETAIL FORMULIR HIPOTERAPI / GENERAL TERAPI ==================== */}
-            {step === 4 && !(formData.jenis_terapi === "terapi_wicara" || formData.jenis_terapi === "terapi-wicara" || formData.jenis_terapi.includes("wicara")) && (
+            {step === 4 && !isWicaraService(formData.jenis_terapi) && (
               <div className="flex flex-col gap-5">
                 <div className="border-b border-grey-100 pb-3">
                   <h3 className="text-lg font-extrabold text-wellme-primary">
