@@ -297,3 +297,22 @@ export const partnershipMomentsApi = {
   getActive: (): Promise<PartnershipMomentItem[]> =>
     request('/partnership-moments', { next: { revalidate: 60 } }),
 };
+
+// ─── Payment Methods (Public) ────────────────────────────────────────────────
+
+export interface PaymentMethodItem {
+  id: number;
+  bank_name: string;
+  account_number: string;
+  account_name: string;
+  instructions: string | null;
+  icon_url: string | null;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export const paymentMethodsApi = {
+  getActive: (): Promise<PaymentMethodItem[]> =>
+    request('/payment-methods', { next: { revalidate: 60 } }),
+};
+

@@ -45,6 +45,17 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
+interface PaymentMethodData {
+  id: number
+  bank_name: string
+  account_number: string
+  account_name: string
+  instructions: string | null
+  icon_url: string | null
+  is_active: boolean
+  sort_order: number
+}
+
 async function getInvoice(token: string): Promise<InvoiceData | null> {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9000'
@@ -63,6 +74,18 @@ async function getInvoice(token: string): Promise<InvoiceData | null> {
   }
 }
 
+async function getPaymentMethods(): Promise<PaymentMethodData[]> {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9000'
+    const res = await fetch(`${apiUrl}/api/payment-methods`, { cache: 'no-store' })
+    if (!res.ok) return []
+    return res.json()
+  } catch (err) {
+    console.error('[Invoice] Payment methods fetch error:', err)
+    return []
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
   const invoice = await getInvoice(token)
@@ -76,10 +99,14 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
 
 export default async function InvoicePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
-  const invoice = await getInvoice(token)
+  const [invoice, paymentMethods] = await Promise.all([
+    getInvoice(token),
+    getPaymentMethods(),
+  ])
   if (!invoice) notFound()
 
   const status = STATUS_MAP[invoice.status] ?? { label: invoice.status, bg: '#F3F4F6', text: '#374151', border: '#D1D5DB' }
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9000'
 
   return (
     <div className="min-h-screen bg-[#F0F4F9] py-10 px-4 print:bg-white print:py-0 print:px-0">
@@ -98,9 +125,16 @@ export default async function InvoicePage({ params }: { params: Promise<{ token:
             style={{ background: 'linear-gradient(135deg, #0f2d4a 0%, #1c72bb 100%)' }}
             className="px-8 py-7 flex items-center justify-between"
           >
-            <div>
-              <h1 className="text-white text-2xl font-extrabold tracking-tight">Allia Kids</h1>
-              <p className="text-white/60 text-xs mt-0.5">Klinik Tumbuh Kembang Anak</p>
+            <div className="flex items-center gap-3.5">
+              <img
+                src="/assets/img/alliakids2.png"
+                alt="Allia Kids Logo"
+                className="h-11 w-auto object-contain bg-white/10 p-1.5 rounded-xl border border-white/20 shadow-sm shrink-0"
+              />
+              <div>
+                <h1 className="text-white text-2xl font-extrabold tracking-tight">Allia Kids</h1>
+                <p className="text-white/60 text-xs mt-0.5">Klinik Tumbuh Kembang Anak</p>
+              </div>
             </div>
             <div className="text-right">
               <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">INVOICE</p>
@@ -209,14 +243,45 @@ export default async function InvoicePage({ params }: { params: Promise<{ token:
               </div>
             )}
 
-            {/* Payment Instructions */}
+            {/* Payment Instructions & Methods */}
             {invoice.status === 'belum_bayar' && (
-              <div className="bg-blue-50 rounded-xl border border-blue-100 px-5 py-4">
-                <p className="text-blue-800 text-xs font-extrabold uppercase tracking-widest mb-2">Cara Pembayaran</p>
-                <p className="text-blue-700 text-sm leading-relaxed">
-                  Silakan transfer ke rekening klinik dan kirimkan bukti pembayaran ke WhatsApp kami di{' '}
-                  <a href="tel:+6285138511348" className="font-bold underline">+62 851-3851-1348</a>.
-                </p>
+              <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 flex flex-col gap-4">
+                <div>
+                  <p className="text-blue-900 text-xs font-extrabold uppercase tracking-widest mb-1">Cara Pembayaran</p>
+                  <p className="text-blue-700 text-xs font-medium leading-relaxed">
+                    Silakan transfer ke salah satu rekening resmi klinik di bawah ini dan kirimkan bukti pembayaran ke WhatsApp kami di{' '}
+                    <a href="https://wa.me/6285138511348" target="_blank" rel="noopener noreferrer" className="font-bold underline text-blue-800">+62 851-3851-1348</a>.
+                  </p>
+                </div>
+
+                {paymentMethods && paymentMethods.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    {paymentMethods.map((pm) => (
+                      <div key={pm.id} className="bg-white rounded-xl p-3.5 border border-blue-150 shadow-sm flex flex-col justify-between gap-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-extrabold text-gray-800">{pm.bank_name}</span>
+                          {pm.icon_url && (
+                            <img
+                              src={pm.icon_url.startsWith('http') ? pm.icon_url : `${apiUrl}${pm.icon_url}`}
+                              alt={pm.bank_name}
+                              className="h-5 w-auto object-contain max-w-[60px]"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-[10px] font-bold text-gray-400">No. Rek:</span>
+                            <span className="text-xs font-extrabold text-blue-700 font-mono select-all">{pm.account_number}</span>
+                          </div>
+                          <p className="text-[10px] text-gray-500 font-semibold mt-0.5">a.n. {pm.account_name}</p>
+                        </div>
+                        {pm.instructions && (
+                          <p className="text-[10px] text-gray-400 italic border-t border-gray-100 pt-1 mt-1 leading-tight">{pm.instructions}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

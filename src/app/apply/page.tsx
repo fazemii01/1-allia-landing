@@ -989,7 +989,7 @@ export default function ApplyPage() {
             )}
 
             {/* ==================== STEP 4A: DETAIL FORMULIR TERAPI WICARA ==================== */}
-            {step === 4 && formData.jenis_terapi === "terapi_wicara" && (
+            {step === 4 && (formData.jenis_terapi === "terapi_wicara" || formData.jenis_terapi === "terapi-wicara" || formData.jenis_terapi.includes("wicara")) && (
               <div className="flex flex-col gap-5">
                 <div className="border-b border-grey-100 pb-3">
                   <h3 className="text-lg font-extrabold text-wellme-primary">Formulir Khusus Terapi Wicara</h3>
@@ -1260,12 +1260,14 @@ export default function ApplyPage() {
               </div>
             )}
 
-            {/* ==================== STEP 4B: DETAIL FORMULIR HIPOTERAPI ==================== */}
-            {step === 4 && formData.jenis_terapi === "hipoterapi" && (
+            {/* ==================== STEP 4B: DETAIL FORMULIR HIPOTERAPI / GENERAL TERAPI ==================== */}
+            {step === 4 && !(formData.jenis_terapi === "terapi_wicara" || formData.jenis_terapi === "terapi-wicara" || formData.jenis_terapi.includes("wicara")) && (
               <div className="flex flex-col gap-5">
                 <div className="border-b border-grey-100 pb-3">
-                  <h3 className="text-lg font-extrabold text-wellme-primary">Formulir Khusus Hipoterapi</h3>
-                  <p className="text-xs text-grey-400 font-semibold">Tolong jawab dengan kondisi aktual emosi anak</p>
+                  <h3 className="text-lg font-extrabold text-wellme-primary">
+                    Formulir Khusus {dbLayanan.find(l => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi)?.title || "Detail Terapi"}
+                  </h3>
+                  <p className="text-xs text-grey-400 font-semibold">Tolong jawab dengan kondisi aktual anak</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1488,7 +1490,10 @@ export default function ApplyPage() {
 
                     <span className="text-grey-300 uppercase tracking-wide text-[10px]">Program Terapi</span>
                     <span className="text-wellme-primary font-bold text-right capitalize">
-                      {formData.jenis_terapi === "terapi_wicara" ? "🗣️ Terapi Wicara" : "🧠 Hipoterapi"}
+                      {(() => {
+                        const sel = dbLayanan.find(l => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi);
+                        return sel ? `${sel.title} - ${formData.program}` : `${formData.jenis_terapi}: ${formData.program}`;
+                      })()}
                     </span>
                   </div>
 
