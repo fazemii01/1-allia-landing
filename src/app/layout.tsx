@@ -20,6 +20,23 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  openGraph: {
+    title: "Allia Kids - Klinik Tumbuh Kembang & Hipnoterapi Anak Terpercaya",
+    description: "Layanan tumbuh kembang anak terpercaya di Indonesia: hipnoterapi anak, terapi wicara, terapi perilaku, dan skrining tumbuh kembang profesional.",
+    images: [
+      {
+        url: "/assets/alliakids-logo(3).png",
+        alt: "Allia Kids Logo",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Allia Kids - Klinik Tumbuh Kembang & Hipnoterapi Anak Terpercaya",
+    description: "Layanan tumbuh kembang anak terpercaya di Indonesia: hipnoterapi anak, terapi wicara, terapi perilaku, dan skrining tumbuh kembang profesional.",
+    images: ["/assets/alliakids-logo(3).png"],
+  },
 };
 
 export default function RootLayout({

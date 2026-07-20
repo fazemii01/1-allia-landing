@@ -4,6 +4,79 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { layananApi, LayananItem } from "@/lib/api";
+
+const STATIC_LAYANAN: LayananItem[] = [
+  {
+    id: 1,
+    slug: "hipnoterapi-anak",
+    title: "Hipnoterapi Anak & Dewasa",
+    description: "Pendekatan hipnosleep/relaksasi emosi untuk mengatasi tantrum berlebih, fobia makanan (takut nasi), atau trauma.",
+    image_url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600",
+    stats: { durasi_sesi: "90 Menit", format_layanan: "Tatap Muka", mulai_dari: "Rp 550.000" },
+    mengapa_memilih: [],
+    isu_permasalahan: [],
+    programs: [
+      { title: "Terapi Emosi & Perilaku", desc: "Membantu anak mengelola emosi negatif seperti marah, sedih, takut, atau trauma secara aman.", harga: "Rp 550.000 / Sesi" },
+      { title: "Terapi Konsentrasi & Fokus Belajar", desc: "Meningkatkan kemampuan anak dalam berkonsentrasi, menghafal, dan menyerap pelajaran sekolah.", harga: "Rp 550.000 / Sesi" },
+      { title: "Terapi Percaya Diri & Sosialisasi", desc: "Membantu anak mengatasi rasa malu, minder, rendah diri, atau takut bersosialisasi.", harga: "Rp 550.000 / Sesi" },
+      { title: "Terapi Gangguan Tidur & Mimpi Buruk", desc: "Mengatasi masalah susah tidur, sering terbangun di malam hari, ketakutan tidur sendiri.", harga: "Rp 550.000 / Sesi" },
+      { title: "Terapi Pengendalian Kebiasaan Buruk", desc: "Membantu anak menghentikan kebiasaan seperti menggigit kuku, ngompol, mengisap jempol.", harga: "Rp 550.000 / Sesi" },
+      { title: "Terapi Kecemasan & Fobia", desc: "Mengatasi ketakutan berlebih terhadap sekolah, dokter, kegelapan, hewan, atau situasi sosial.", harga: "Rp 550.000 / Sesi" },
+    ],
+    is_active: true,
+    sort_order: 1,
+  },
+  {
+    id: 2,
+    slug: "terapi-wicara",
+    title: "Layanan Terapi Wicara",
+    description: "Dirancang untuk mengatasi hambatan bicara, kosa kata terbatas, artikulasi, dan gangguan bahasa (Speech Delay).",
+    image_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600",
+    stats: { durasi_sesi: "60 Menit", format_layanan: "Offline & Online", mulai_dari: "Rp 150.000" },
+    mengapa_memilih: [],
+    isu_permasalahan: [],
+    programs: [
+      { title: "Terapi Wicara Umum", desc: "Evaluasi dan stimulasi kosa kata & komunikasi verbal anak.", harga: "Rp 150.000 / Sesi" },
+      { title: "Artikulasi & Kejelasan Bicara (Cadel)", desc: "Melatih kejelasan pengucapan konsonan dan vokal.", harga: "Rp 150.000 / Sesi" },
+      { title: "Mengatasi Gagap / Stuttering", desc: "Melatih kelancaran ritme bicar dan pernapasan.", harga: "Rp 150.000 / Sesi" },
+      { title: "Hambatan Motorik Mulut (Oro-motor)", desc: "Latihan kekuatan otot bibir, lidah, dan rahang.", harga: "Rp 150.000 / Sesi" },
+    ],
+    is_active: true,
+    sort_order: 2,
+  },
+  {
+    id: 3,
+    slug: "terapi-perilaku",
+    title: "Terapi Perilaku",
+    description: "Pendampingan khusus untuk stimulasi fokus, interaksi sosial, regulasi emosi, dan penanganan anak ADHD/Autisme.",
+    image_url: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?q=80&w=600",
+    stats: { durasi_sesi: "60 Menit", format_layanan: "Offline", mulai_dari: "Rp 200.000" },
+    mengapa_memilih: [],
+    isu_permasalahan: [],
+    programs: [
+      { title: "Terapi Perilaku & Sensori", desc: "Modifikasi perilaku hiperaktif dan ketaatan instruksi.", harga: "Rp 200.000 / Sesi" },
+      { title: "Bimbingan Fokus & Atensi", desc: "Melatih daya tahan konsentrasi dan keheningan duduk.", harga: "Rp 200.000 / Sesi" },
+    ],
+    is_active: true,
+    sort_order: 3,
+  },
+  {
+    id: 4,
+    slug: "tumbuh-kembang",
+    title: "Skrining Tumbuh Kembang",
+    description: "Pemeriksaan komprehensif oleh tim praktisi untuk mendeteksi dini milestone perkembangan fisik, bahasa, dan kognitif.",
+    image_url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600",
+    stats: { durasi_sesi: "45 Menit", format_layanan: "Offline", mulai_dari: "Rp 250.000" },
+    mengapa_memilih: [],
+    isu_permasalahan: [],
+    programs: [
+      { title: "Skrining Tumbuh Kembang Lengkap", desc: "Evaluasi motorik, wicara, emosi, dan sosial anak.", harga: "Rp 250.000 / Sesi" },
+    ],
+    is_active: true,
+    sort_order: 4,
+  },
+];
 
 // Custom scrollable dropdown to limit height to 6 items and match premium aesthetics
 const CustomDropdown = ({
@@ -295,6 +368,22 @@ export default function ApplyPage() {
     declarationAccepted: false,
   });
 
+  const [dbLayanan, setDbLayanan] = useState<LayananItem[]>(STATIC_LAYANAN);
+
+  useEffect(() => {
+    async function loadLayanan() {
+      try {
+        const list = await layananApi.getAll();
+        if (list && list.length > 0) {
+          setDbLayanan(list);
+        }
+      } catch (err) {
+        console.warn("Gagal memuat layanan dari backend, menggunakan data fallback.", err);
+      }
+    }
+    loadLayanan();
+  }, []);
+
   useEffect(() => {
     setIsMounted(true);
     if (typeof window !== "undefined") {
@@ -302,7 +391,7 @@ export default function ApplyPage() {
       
       // Read query params manually to avoid Suspense requirement of useSearchParams
       const params = new URLSearchParams(window.location.search);
-      const queryCategory = params.get("category");
+      const queryCategory = params.get("category") || params.get("layanan");
       const queryProgram = params.get("program");
 
       setFormData((prev) => {
@@ -318,7 +407,15 @@ export default function ApplyPage() {
           setIsReadOnlyUser(true);
         }
         if (queryCategory) {
-          updated.jenis_terapi = queryCategory;
+          const matched = dbLayanan.find(
+            (l) =>
+              l.slug === queryCategory ||
+              l.id.toString() === queryCategory ||
+              (l.slug && queryCategory.includes(l.slug)) ||
+              (l.slug === "terapi-wicara" && (queryCategory === "terapi_wicara" || queryCategory === "terapi-wicara")) ||
+              (l.slug === "hipnoterapi-anak" && (queryCategory === "hipoterapi" || queryCategory === "hipnoterapi"))
+          );
+          updated.jenis_terapi = matched ? matched.slug : queryCategory;
         }
         if (queryProgram) {
           updated.program = queryProgram;
@@ -326,7 +423,7 @@ export default function ApplyPage() {
         return updated;
       });
     }
-  }, []);
+  }, [dbLayanan]);
 
 
 
@@ -395,7 +492,7 @@ export default function ApplyPage() {
       }
     }
     if (step === 4) {
-      if (formData.jenis_terapi === "terapi_wicara") {
+      if (formData.jenis_terapi === "terapi_wicara" || formData.jenis_terapi.includes("wicara")) {
         if (
           !formData.masalah_bicara ||
           !formData.sudah_berapa_lama_wicara ||
@@ -419,7 +516,7 @@ export default function ApplyPage() {
           formData.tempat_favorit.length === 0 ||
           formData.hobby.length === 0
         ) {
-          setValidationError("Harap lengkapi pertanyaan wajib (*) pada formulir Hipoterapi");
+          setValidationError("Harap lengkapi pertanyaan wajib (*) pada formulir Detail Terapi");
           window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
@@ -447,11 +544,17 @@ export default function ApplyPage() {
 
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const selectedLayanan = dbLayanan.find(
+        (l) =>
+          l.slug === formData.jenis_terapi ||
+          l.id.toString() === formData.jenis_terapi ||
+          (l.slug === "terapi-wicara" && formData.jenis_terapi === "terapi_wicara") ||
+          (l.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi")
+      );
+      const titleLayanan = selectedLayanan ? selectedLayanan.title : formData.jenis_terapi;
       const payload = {
         ...formData,
-        jenis_terapi: formData.jenis_terapi === "terapi_wicara" 
-          ? `Terapi Wicara: ${formData.program}`
-          : `Hipnoterapi: ${formData.program}`
+        jenis_terapi: `${titleLayanan}: ${formData.program || titleLayanan}`
       };
       
       const res = await fetch(`${baseUrl}/api/apply`, {
@@ -482,15 +585,22 @@ export default function ApplyPage() {
         localStorage.setItem("childJenisKelamin", formData.jenis_kelamin);
       }
 
+      const selectedLayanan = dbLayanan.find(
+        (l) =>
+          l.slug === formData.jenis_terapi ||
+          l.id.toString() === formData.jenis_terapi ||
+          (l.slug === "terapi-wicara" && formData.jenis_terapi === "terapi_wicara") ||
+          (l.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi")
+      );
+      const titleLayanan = selectedLayanan ? selectedLayanan.title : formData.jenis_terapi;
+
       // Offline fallback: Save in localStorage so user still gets redirected
       const pendingSubmissions = JSON.parse(localStorage.getItem("pending_applies") || "[]");
       pendingSubmissions.push({
         id: Date.now(),
         submittedAt: new Date().toISOString(),
         ...formData,
-        jenis_terapi: formData.jenis_terapi === "terapi_wicara" 
-          ? `Terapi Wicara: ${formData.program}`
-          : `Hipnoterapi: ${formData.program}`
+        jenis_terapi: `${titleLayanan}: ${formData.program || titleLayanan}`
       });
       localStorage.setItem("pending_applies", JSON.stringify(pendingSubmissions));
 
@@ -739,70 +849,84 @@ export default function ApplyPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-                  {[
-                    {
-                      id: "terapi_wicara",
-                      icon: "🗣️",
-                      title: "Terapi Wicara",
-                      desc: "Dirancang untuk mengatasi hambatan bicara, kosa kata terbatas, artikulasi, dan gangguan bahasa (Speech Delay).",
-                    },
-                    {
-                      id: "hipoterapi",
-                      icon: "🧠",
-                      title: "Hipoterapi Anak",
-                      desc: "Pendekatan hipnosleep/relaksasi emosi untuk mengatasi tantrum berlebih, fobia makanan (takut nasi), atau trauma.",
-                    },
-                  ].map((prog) => (
-                    <button
-                      key={prog.id}
-                      type="button"
-                      onClick={() => setFormData((prev) => ({ ...prev, jenis_terapi: prog.id, program: "" }))}
-                      className={`flex flex-col items-center text-center p-6 rounded-3xl border-2 transition-all duration-300 cursor-pointer ${
-                        formData.jenis_terapi === prog.id
-                          ? "border-wellme-primary bg-[#EBF3FC] shadow-md shadow-wellme-primary/10"
-                          : "border-grey-200 hover:border-grey-300 hover:bg-slate-50"
-                      }`}
-                    >
-                      <span className="text-4xl mb-4">{prog.icon}</span>
-                      <h4 className="font-extrabold text-wellme-primary mb-2 text-base">{prog.title}</h4>
-                      <p className="text-xs text-grey-400 font-semibold leading-relaxed">{prog.desc}</p>
-                    </button>
-                  ))}
+                  {dbLayanan.map((prog) => {
+                    const getIcon = (item: LayananItem) => {
+                      if ((item as any).category?.icon) return (item as any).category.icon;
+                      const s = item.slug?.toLowerCase() || item.title?.toLowerCase() || "";
+                      if (s.includes("wicara")) return "🗣️";
+                      if (s.includes("hipno") || s.includes("hipo")) return "🧠";
+                      if (s.includes("perilaku")) return "🎯";
+                      if (s.includes("tumbuh") || s.includes("skrining")) return "📏";
+                      if (s.includes("sidik")) return "👆";
+                      if (s.includes("jari")) return "✋";
+                      return "🩺";
+                    };
+
+                    const isSelected =
+                      formData.jenis_terapi === prog.slug ||
+                      formData.jenis_terapi === prog.id.toString() ||
+                      (prog.slug === "terapi-wicara" && formData.jenis_terapi === "terapi_wicara") ||
+                      (prog.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi");
+
+                    return (
+                      <button
+                        key={prog.id || prog.slug}
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, jenis_terapi: prog.slug, program: "" }))}
+                        className={`flex flex-col items-center text-center p-6 rounded-3xl border-2 transition-all duration-300 cursor-pointer ${
+                          isSelected
+                            ? "border-wellme-primary bg-[#EBF3FC] shadow-md shadow-wellme-primary/10"
+                            : "border-grey-200 hover:border-grey-300 hover:bg-slate-50"
+                        }`}
+                      >
+                        <span className="text-4xl mb-4">{getIcon(prog)}</span>
+                        <h4 className="font-extrabold text-wellme-primary mb-2 text-base">{prog.title}</h4>
+                        <p className="text-xs text-grey-400 font-semibold leading-relaxed line-clamp-3">{prog.description}</p>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {formData.jenis_terapi && (
-                  <div className="mt-4 p-6 bg-slate-50 border border-grey-200 rounded-3xl animate-fadeIn flex flex-col gap-3">
-                    <label className="block text-sm font-extrabold text-wellme-primary">
-                      Pilih Program Spesifik *
-                    </label>
-                    <select
-                      name="program"
-                      value={formData.program}
-                      onChange={handleInputChange}
-                      className="w-full bg-white border border-grey-200 rounded-2xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-wellme-primary cursor-pointer text-grey-500"
-                    >
-                      {formData.jenis_terapi === "terapi_wicara" ? (
-                        <>
-                          <option value="">-- Pilih Program Wicara --</option>
-                          <option value="Terapi Wicara Umum">Terapi Wicara Umum</option>
-                          <option value="Artikulasi & Kejelasan Bicara (Cadel)">Artikulasi & Kejelasan Bicara (Cadel)</option>
-                          <option value="Mengatasi Gagap / Stuttering">Mengatasi Gagap / Stuttering</option>
-                          <option value="Hambatan Motorik Mulut (Oro-motor)">Hambatan Motorik Mulut (Oro-motor)</option>
-                        </>
-                      ) : (
-                        <>
-                          <option value="">-- Pilih Program Hipnoterapi --</option>
-                          <option value="Terapi Emosi & Perilaku">Terapi Emosi & Perilaku (Rp 550.000 / Sesi)</option>
-                          <option value="Terapi Konsentrasi & Fokus Belajar">Terapi Konsentrasi & Fokus Belajar (Rp 550.000 / Sesi)</option>
-                          <option value="Terapi Percaya Diri & Sosialisasi">Terapi Percaya Diri & Sosialisasi (Rp 550.000 / Sesi)</option>
-                          <option value="Terapi Gangguan Tidur & Mimpi Buruk">Terapi Gangguan Tidur & Mimpi Buruk (Rp 550.000 / Sesi)</option>
-                          <option value="Terapi Pengendalian Kebiasaan Buruk">Terapi Pengendalian Kebiasaan Buruk (Rp 550.000 / Sesi)</option>
-                          <option value="Terapi Kecemasan & Fobia">Terapi Kecemasan & Fobia (Rp 550.000 / Sesi)</option>
-                        </>
-                      )}
-                    </select>
-                  </div>
-                )}
+                {formData.jenis_terapi && (() => {
+                  const selectedLayanan = dbLayanan.find(
+                    (l) =>
+                      l.slug === formData.jenis_terapi ||
+                      l.id.toString() === formData.jenis_terapi ||
+                      (l.slug === "terapi-wicara" && formData.jenis_terapi === "terapi_wicara") ||
+                      (l.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi")
+                  );
+
+                  const programs = selectedLayanan?.programs || [];
+
+                  return (
+                    <div className="mt-4 p-6 bg-slate-50 border border-grey-200 rounded-3xl animate-fadeIn flex flex-col gap-3">
+                      <label className="block text-sm font-extrabold text-wellme-primary">
+                        Pilih Program Spesifik *
+                      </label>
+                      <select
+                        name="program"
+                        value={formData.program}
+                        onChange={handleInputChange}
+                        className="w-full bg-white border border-grey-200 rounded-2xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-wellme-primary cursor-pointer text-grey-500"
+                      >
+                        <option value="">
+                          -- Pilih Program {selectedLayanan ? selectedLayanan.title : "Terapi"} --
+                        </option>
+                        {programs.length > 0 ? (
+                          programs.map((p, idx) => (
+                            <option key={idx} value={p.title}>
+                              {p.title} {p.harga ? `(${p.harga})` : ""}
+                            </option>
+                          ))
+                        ) : (
+                          <option value={selectedLayanan?.title || "Program Terapi Umum"}>
+                            {selectedLayanan?.title || "Program Terapi Umum"}
+                          </option>
+                        )}
+                      </select>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 
