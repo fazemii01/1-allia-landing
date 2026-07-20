@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -1574,3 +1574,12 @@ function ApplyPageContent() {
     </div>
   );
 }
+
+export default function ApplyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center font-bold text-wellme-primary">Memuat...</div>}>
+      <ApplyPageContent />
+    </Suspense>
+  );
+}
+
