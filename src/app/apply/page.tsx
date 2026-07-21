@@ -550,7 +550,7 @@ function ApplyPageContent() {
     setIsSubmitting(true);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const selectedLayanan = dbLayanan.find(
         (l) =>
           l.slug === formData.jenis_terapi ||
@@ -559,21 +559,35 @@ function ApplyPageContent() {
           (l.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi")
       );
       const titleLayanan = selectedLayanan ? selectedLayanan.title : formData.jenis_terapi;
+
+      // Determine clean jenis_terapi string for backend
+      const normalizedJenisTerapi = isWicaraService(formData.jenis_terapi) ? "terapi_wicara" : "hipoterapi";
+
       const payload = {
         ...formData,
-        jenis_terapi: `${titleLayanan}: ${formData.program || titleLayanan}`
+        jenis_terapi: normalizedJenisTerapi,
+        program_detail: `${titleLayanan}: ${formData.program || titleLayanan}`
       };
       
-      const res = await fetch(`${baseUrl}/api/apply`, {
+      const res = await fetch(`${dashboardUrl}/api/apply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
-        throw new Error("HTTP error " + res.status);
+        // If dashboard POST returned non-2xx, try standard NestJS fallback URL if different
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (baseUrl && baseUrl !== dashboardUrl) {
+          await fetch(`${baseUrl}/api/apply`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        }
       }
 
       if (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true") {

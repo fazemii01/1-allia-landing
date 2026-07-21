@@ -9,7 +9,15 @@ import {
   partnershipWhyUsApi,
   partnershipCollaborationsApi,
   partnershipMomentsApi,
+  bannersApi,
 } from "@/lib/api";
+
+const normalizeUrl = (url: string | null | undefined) => {
+  if (!url) return '';
+  return url
+    .replace('http://194.233.91.132:19000', 'https://storage.alliago.id')
+    .replace('http://storage.alliago.id', 'https://storage.alliago.id');
+};
 
 const STATIC_PARTNERS = [
   { id: 1, name: "Bathaholic", slug: "bathaholic", logo_url: "/assets/img/logo/partnership/bathaholic.png" },
@@ -58,26 +66,56 @@ export default function Partnership() {
   const [collaborations, setCollaborations] = useState<any[]>(STATIC_COLLABORATIONS);
   const [moments, setMoments] = useState<any[]>(STATIC_MOMENTS);
 
+  // Manageable dynamic images for Hero, Why Us, and Discussion/Contact sections
+  const [heroBgImage, setHeroBgImage] = useState<string>("/assets/img/background/partnership/header.webp");
+  const [whyUsImage, setWhyUsImage] = useState<string>("/assets/img/gallery/partnership/why.webp");
+  const [contactImage, setContactImage] = useState<string>("/assets/img/gallery/partnership/team.webp");
+
   useEffect(() => {
-    // Partners logos
-    partnershipApi.getActive()
-      .then((data) => { if (data?.length > 0) setPartners(data); })
-      .catch((err) => console.error("Partners API error:", err));
+    // 1. Fetch Banner images (Hero, Why Us, Contact section images override)
+    bannersApi?.getAll?.()
+      ?.then((banners) => {
+        if (banners && banners.length > 0) {
+          // Hero banner override (href matching partnership-hero/header)
+          const heroBanner = banners.find((b) => b.href && (b.href.includes("partnership-hero") || b.href.includes("partnership-header") || b.href.includes("partnership_hero")));
+          if (heroBanner?.image_url) {
+            setHeroBgImage(normalizeUrl(heroBanner.image_url));
+          }
 
-    // Why Us cards
-    partnershipWhyUsApi.getActive()
-      .then((data) => { if (data?.length > 0) setWhyUs(data); })
-      .catch((err) => console.error("WhyUs API error:", err));
+          // Why Us section image override (href matching partnership-why)
+          const whyBanner = banners.find((b) => b.href && (b.href.includes("partnership-why") || b.href.includes("partnership_why")));
+          if (whyBanner?.image_url) {
+            setWhyUsImage(normalizeUrl(whyBanner.image_url));
+          }
 
-    // Collaboration types
-    partnershipCollaborationsApi.getActive()
-      .then((data) => { if (data?.length > 0) setCollaborations(data); })
-      .catch((err) => console.error("Collaborations API error:", err));
+          // Contact / Mari Mulai Berdiskusi section image override (href matching partnership-contact/discussion/team)
+          const contactBanner = banners.find((b) => b.href && (b.href.includes("partnership-contact") || b.href.includes("partnership-team") || b.href.includes("partnership_contact")));
+          if (contactBanner?.image_url) {
+            setContactImage(normalizeUrl(contactBanner.image_url));
+          }
+        }
+      })
+      ?.catch((err) => console.warn("Banners API info:", err));
 
-    // Moments gallery
-    partnershipMomentsApi.getActive()
-      .then((data) => { if (data?.length > 0) setMoments(data); })
-      .catch((err) => console.error("Moments API error:", err));
+    // 2. Partners logos
+    partnershipApi?.getActive?.()
+      ?.then((data) => { if (data?.length > 0) setPartners(data); })
+      ?.catch((err) => console.error("Partners API error:", err));
+
+    // 3. Why Us cards
+    partnershipWhyUsApi?.getActive?.()
+      ?.then((data) => { if (data?.length > 0) setWhyUs(data); })
+      ?.catch((err) => console.error("WhyUs API error:", err));
+
+    // 4. Collaboration types
+    partnershipCollaborationsApi?.getActive?.()
+      ?.then((data) => { if (data?.length > 0) setCollaborations(data); })
+      ?.catch((err) => console.error("Collaborations API error:", err));
+
+    // 5. Moments gallery
+    partnershipMomentsApi?.getActive?.()
+      ?.then((data) => { if (data?.length > 0) setMoments(data); })
+      ?.catch((err) => console.error("Moments API error:", err));
   }, []);
 
   return (
@@ -135,10 +173,11 @@ export default function Partnership() {
       </nav>
 
       <main className="flex-grow">
-        {/* Header Section with event background photo */}
+        {/* Header Section with dynamic background photo */}
         <header 
-          className="relative overflow-hidden bg-cover bg-bottom flex items-center text-white min-h-[600px] lg:min-h-[900px] pt-32 pb-16"
-          style={{ backgroundImage: "url('/assets/img/background/partnership/header.webp')" }}
+          suppressHydrationWarning
+          className="relative overflow-hidden bg-cover bg-bottom flex items-center text-white min-h-[600px] lg:min-h-[900px] pt-32 pb-16 transition-all duration-500"
+          style={{ backgroundImage: `url('${heroBgImage}')` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#070b0e] via-[#070b0e]/80 to-transparent z-10" />
           <div className="container mx-auto px-4 lg:px-10 h-full relative z-20 w-full">
@@ -175,7 +214,7 @@ export default function Partnership() {
                   <div key={`partner-logo-1-${c}`} className="flex items-center justify-center shrink-0">
                     <img
                       className="h-8 md:h-10 w-auto object-contain"
-                      src={t.logo_url}
+                      src={normalizeUrl(t.logo_url)}
                       alt={t.name}
                       loading="lazy"
                     />
@@ -188,7 +227,7 @@ export default function Partnership() {
                   <div key={`partner-logo-2-${c}`} className="flex items-center justify-center shrink-0">
                     <img
                       className="h-8 md:h-10 w-auto object-contain"
-                      src={t.logo_url}
+                      src={normalizeUrl(t.logo_url)}
                       alt={t.name}
                       loading="lazy"
                     />
@@ -199,14 +238,15 @@ export default function Partnership() {
           </div>
         </section>
 
-        {/* Why Us Section */}
+        {/* Why Us Section with dynamic image */}
         <section id="why" className="container mx-auto px-4 lg:px-10 py-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 hidden lg:block">
               <div className="rounded-3xl overflow-hidden shadow-lg border border-grey-200 aspect-[4/3]">
                 <img
+                  suppressHydrationWarning
                   className="w-full h-full object-cover"
-                  src="/assets/img/gallery/partnership/why.webp"
+                  src={whyUsImage}
                   alt="Why Allia Kids"
                 />
               </div>
@@ -265,16 +305,16 @@ export default function Partnership() {
               <div className="lg:col-span-7 bg-white rounded-3xl p-6 lg:p-8 border border-grey-200 shadow-sm flex flex-col gap-6">
                 <div>
                   <h3 className="text-xl font-extrabold text-wellme-primary mb-3">
-                    {collaborations[activeCollab].title}
+                    {collaborations[activeCollab]?.title}
                   </h3>
                   <p className="text-sm text-grey-400 font-semibold leading-relaxed">
-                    {collaborations[activeCollab].description}
+                    {collaborations[activeCollab]?.description}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {collaborations[activeCollab].images.map((img: string, imgIdx: number) => (
+                  {collaborations[activeCollab]?.images?.map((img: string, imgIdx: number) => (
                     <div key={imgIdx} className="rounded-xl overflow-hidden border border-grey-150 aspect-video shadow-sm">
-                      <img src={img} className="w-full h-full object-cover" alt="Moment" />
+                      <img src={normalizeUrl(img)} className="w-full h-full object-cover" alt="Moment" />
                     </div>
                   ))}
                 </div>
@@ -283,11 +323,11 @@ export default function Partnership() {
           </div>
         </section>
 
-        {/* Contact Section */}
+        {/* Contact Section with dynamic team image */}
         <div className="pt-16 -mt-28 lg:pt-40 lg:-mt-40" id="contact">
           <section className="mb-32 lg:mb-40 relative overflow-x-hidden lg:overflow-visible z-20 pt-20 lg:pt-0">
             <div className="absolute top-0 lg:top-1/2 lg:-translate-y-1/2 right-[-3rem] lg:right-0 w-full max-w-[80%] lg:max-w-[50%] h-[200px] lg:h-[480px] 2xl:max-h-[640px] z-10">
-              <img className="rounded-l-full w-full h-full object-cover" alt="team" src="/assets/img/gallery/partnership/team.webp" />
+              <img suppressHydrationWarning className="rounded-l-full w-full h-full object-cover" alt="team" src={contactImage} />
               <div className="absolute inset-0 rounded-l-full bg-[linear-gradient(91.01deg,rgba(28,114,187,0.5)_-93.15%,rgba(10,124,195,0.5)_129.94%)]"></div>
             </div>
             <div className="bg-wellme-primary text-white pt-36 pb-16 lg:py-16">
@@ -326,7 +366,7 @@ export default function Partnership() {
               >
                 <img
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src={moment.img_url}
+                  src={normalizeUrl(moment.img_url)}
                   alt={moment.title}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />

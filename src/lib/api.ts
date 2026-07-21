@@ -233,6 +233,22 @@ export const invoicesApi = {
     } as RequestInit),
 };
 
+// ─── Banners (Public) ───────────────────────────────────────────────────────
+
+export interface BannerItem {
+  id: number;
+  image_url: string;
+  mobile_image_url?: string;
+  href?: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export const bannersApi = {
+  getAll: (): Promise<BannerItem[]> =>
+    request('/banners', { next: { revalidate: 60 } }),
+};
+
 // ─── Partnerships (Public) ──────────────────────────────────────────────────
 
 export interface PartnershipItem {
@@ -260,6 +276,7 @@ export interface PartnershipWhyUsItem {
   description: string;
   sort_order: number;
   is_active: boolean;
+  image_url?: string;
 }
 
 export const partnershipWhyUsApi = {
@@ -315,4 +332,3 @@ export const paymentMethodsApi = {
   getActive: (): Promise<PaymentMethodItem[]> =>
     request('/payment-methods', { next: { revalidate: 60 } }),
 };
-
