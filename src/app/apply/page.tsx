@@ -76,6 +76,24 @@ const STATIC_LAYANAN: LayananItem[] = [
     is_active: true,
     sort_order: 4,
   },
+  {
+    id: 5,
+    slug: "terapi-wicara-perilaku",
+    title: "Terapi Wicara & Perilaku",
+    description: "Pendampingan komprehensif stimulasi artikulasi bicara, penanganan speech delay (keterlambatan bicara), dan pembiasaan modifikasi perilaku fokus anak.",
+    image_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600",
+    stats: { durasi_sesi: "60 Menit", format_layanan: "Tatap Muka", mulai_dari: "Rp 1.750.000" },
+    mengapa_memilih: [],
+    isu_permasalahan: [],
+    programs: [
+      { title: "Paket Terapi Perilaku 8 Sesi + Terapi Wicara", desc: "Pendampingan lengkap 8 sesi terapi perilaku + stimulasi wicara.", harga: "Rp 3.500.000" },
+      { title: "Paket Terapi Perilaku 4 Sesi + Terapi Wicara", desc: "Paket intensif 4 sesi terapi perilaku dan stimulasi wicara.", harga: "Rp 2.750.000" },
+      { title: "Terapi Wicara", desc: "Stimulasi artikulasi bicara dan penanganan keterlambatan bicara.", harga: "Rp 1.750.000" },
+      { title: "Terapi Perilaku", desc: "Modifikasi perilaku, stimulasi atensi, dan regulasi emosi anak.", harga: "Rp 1.750.000" },
+    ],
+    is_active: true,
+    sort_order: 5,
+  },
 ];
 
 // Custom scrollable dropdown to limit height to 6 items and match premium aesthetics
