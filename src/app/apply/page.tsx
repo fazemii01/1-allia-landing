@@ -372,6 +372,7 @@ function ApplyPageContent() {
     detail_ketakutan: "",
     // Step 5
     declarationAccepted: false,
+    payment_option: "dp_50", // dp_50 | full
   });
 
   const [dbLayanan, setDbLayanan] = useState<LayananItem[]>(STATIC_LAYANAN);
@@ -1532,13 +1533,98 @@ function ApplyPageContent() {
                   </div>
                 </div>
 
+                {/* Skema & Opsi Pembayaran (DP 50% vs Lunas) */}
+                <div className="flex flex-col gap-3 pt-2">
+                  <div className="flex flex-col">
+                    <h4 className="text-sm font-extrabold text-wellme-primary flex items-center gap-2">
+                      <span>💳 Skema Pembayaran Sesi Terapi</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">
+                        Opsi DP 50% Tersedia
+                      </span>
+                    </h4>
+                    <p className="text-xs text-grey-400 font-medium">Pilih metode pembayaran yang paling nyaman untuk keluarga Anda</p>
+                  </div>
+
+                  {(() => {
+                    const isHipo = (formData.jenis_terapi || '').toLowerCase().includes('hipno') || (formData.jenis_terapi || '').toLowerCase().includes('hipot');
+                    const fullAmount = isHipo ? 550000 : 150000;
+                    const dpAmount = Math.round(fullAmount * 0.5);
+
+                    return (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {/* Option A: DP 50% */}
+                        <div
+                          onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'dp_50' }))}
+                          className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
+                            formData.payment_option === 'dp_50'
+                              ? 'bg-blue-50/70 border-wellme-primary shadow-md'
+                              : 'bg-white border-grey-200 hover:border-grey-300'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">
+                                Rekomendasi
+                              </span>
+                              <h5 className="font-extrabold text-sm text-wellme-primary">Bayar DP 50%</h5>
+                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
+                                Bayar 50% sekarang, sisa 50% dilunasi saat sesi pertama.
+                              </p>
+                            </div>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
+                              formData.payment_option === 'dp_50' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
+                            }`}>
+                              {formData.payment_option === 'dp_50' && <span className="text-xs font-bold">✓</span>}
+                            </div>
+                          </div>
+                          <div className="border-t border-grey-200/60 pt-2 flex justify-between items-baseline">
+                            <span className="text-xs font-bold text-grey-400">Bayar Sekarang:</span>
+                            <span className="text-base font-extrabold text-wellme-primary">Rp {dpAmount.toLocaleString('id-ID')}</span>
+                          </div>
+                        </div>
+
+                        {/* Option B: Full 100% */}
+                        <div
+                          onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'full' }))}
+                          className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
+                            formData.payment_option === 'full'
+                              ? 'bg-blue-50/70 border-wellme-primary shadow-md'
+                              : 'bg-white border-grey-200 hover:border-grey-300'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-grey-100 text-grey-500 uppercase tracking-wider block w-fit mb-1">
+                                Pelunasan Langsung
+                              </span>
+                              <h5 className="font-extrabold text-sm text-wellme-primary">Bayar Lunas 100%</h5>
+                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
+                                Pelunasan penuh di awal pendaftaran.
+                              </p>
+                            </div>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
+                              formData.payment_option === 'full' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
+                            }`}>
+                              {formData.payment_option === 'full' && <span className="text-xs font-bold">✓</span>}
+                            </div>
+                          </div>
+                          <div className="border-t border-grey-200/60 pt-2 flex justify-between items-baseline">
+                            <span className="text-xs font-bold text-grey-400">Total Lunas:</span>
+                            <span className="text-base font-extrabold text-wellme-primary">Rp {fullAmount.toLocaleString('id-ID')}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 <div className="flex items-start gap-3 mt-4 border border-grey-150 p-4 rounded-2xl bg-wellme-100/10">
                   <input
                     type="checkbox"
                     id="declarationAccepted"
                     checked={formData.declarationAccepted}
                     onChange={(e) => setFormData((prev) => ({ ...prev, declarationAccepted: e.target.checked }))}
-                    className="w-5 h-5 accent-wellme-primary mt-0.5"
+                    className="w-5 h-5 accent-wellme-primary mt-0.5 cursor-pointer"
                   />
                   <label htmlFor="declarationAccepted" className="text-xs text-grey-400 font-semibold leading-relaxed cursor-pointer select-none">
                     Saya menyatakan bahwa data yang diisi di atas adalah <strong>benar</strong> dan saya bersedia dihubungi oleh tim administrasi Allia Kids.
