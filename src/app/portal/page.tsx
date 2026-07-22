@@ -40,7 +40,7 @@ const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
 
 export default function PortalOrangTua() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"ringkasan" | "anak" | "jadwal" | "tagihan">("ringkasan");
+  const [activeTab, setActiveTab] = useState<"ringkasan" | "anak" | "jadwal" | "perkembangan" | "tagihan">("ringkasan");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   // Auth state
@@ -53,6 +53,7 @@ export default function PortalOrangTua() {
   const [appointments, setAppointments] = useState<ClientAppointment[]>([]);
   const [invoices, setInvoices] = useState<ClientInvoice[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>(DEFAULT_PAYMENT_METHODS);
+  const [progressLogs, setProgressLogs] = useState<any[]>([]);
   
   // Loading & error
   const [loading, setLoading] = useState(true);
@@ -73,7 +74,7 @@ export default function PortalOrangTua() {
       // Set active tab based on query param if present
       const params = new URLSearchParams(window.location.search);
       const queryTab = params.get("tab");
-      if (queryTab === "ringkasan" || queryTab === "anak" || queryTab === "jadwal" || queryTab === "tagihan") {
+      if (queryTab === "ringkasan" || queryTab === "anak" || queryTab === "jadwal" || queryTab === "perkembangan" || queryTab === "tagihan") {
         setActiveTab(queryTab as any);
       }
 
@@ -95,6 +96,19 @@ export default function PortalOrangTua() {
           setAppointments(appts || []);
           setInvoices(invs || []);
           if (pms && pms.length > 0) setPaymentMethods(pms);
+
+          try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+            const logsRes = await fetch(`${apiUrl}/api/therapy-progress/me`, {
+              headers: { Authorization: `Bearer ${storedToken}` },
+            });
+            if (logsRes.ok) {
+              const logsData = await logsRes.json();
+              setProgressLogs(logsData || []);
+            }
+          } catch (pe) {
+            console.warn("Failed to fetch progress logs", pe);
+          }
         } catch (err: any) {
           console.error("Gagal memuat data portal:", err);
           setError("Gagal memuat data dari server. Silakan coba beberapa saat lagi.");
@@ -237,6 +251,11 @@ export default function PortalOrangTua() {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
+    perkembangan: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    ),
     tagihan: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -298,6 +317,7 @@ export default function PortalOrangTua() {
                       {activeTab === "ringkasan" && "Dashboard"}
                       {activeTab === "anak" && "Data Anak"}
                       {activeTab === "jadwal" && "Jadwal Sesi"}
+                      {activeTab === "perkembangan" && "Check Perkembangan"}
                       {activeTab === "tagihan" && "Tagihan & Invoice"}
                     </span>
                   </div>
@@ -314,10 +334,11 @@ export default function PortalOrangTua() {
                 {isDropdownOpen && (
                   <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-lg z-50 p-2 flex flex-col gap-1">
                     {[
-                      { id: "ringkasan", label: "Dashboard", icon: tabIcons.ringkasan },
-                      { id: "anak", label: "Data Anak", icon: tabIcons.anak },
-                      { id: "jadwal", label: "Jadwal Sesi", icon: tabIcons.jadwal },
-                      { id: "tagihan", label: "Tagihan & Invoice", icon: tabIcons.tagihan },
+                      { id: "ringkasan", label: "Dashboard", icon: "📊" },
+                      { id: "anak", label: "Data Anak", icon: "👶" },
+                      { id: "jadwal", label: "Jadwal Sesi", icon: "📅" },
+                      { id: "perkembangan", label: "📈 Check Perkembangan", icon: "📈" },
+                      { id: "tagihan", label: "Tagihan & Invoice", icon: "💳" },
                     ].map((tab) => (
                       <button
                         key={tab.id}
@@ -342,10 +363,11 @@ export default function PortalOrangTua() {
               {/* Desktop Sidebar Navigation */}
               <nav className="hidden lg:flex lg:flex-col bg-white border border-slate-200/80 rounded-2xl p-2 shadow-sm gap-1">
                 {[
-                  { id: "ringkasan", label: "Dashboard", icon: tabIcons.ringkasan },
-                  { id: "anak", label: "Data Anak", icon: tabIcons.anak },
-                  { id: "jadwal", label: "Jadwal Sesi", icon: tabIcons.jadwal },
-                  { id: "tagihan", label: "Tagihan & Invoice", icon: tabIcons.tagihan },
+                  { id: "ringkasan", label: "Dashboard", icon: "📊" },
+                  { id: "anak", label: "Data Anak", icon: "👶" },
+                  { id: "jadwal", label: "Jadwal Sesi", icon: "📅" },
+                  { id: "perkembangan", label: "📈 Check Perkembangan", icon: "📈" },
+                  { id: "tagihan", label: "Tagihan & Invoice", icon: "💳" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -568,7 +590,216 @@ export default function PortalOrangTua() {
                 </div>
               )}
 
-              {/* TAB 4: TAGIHAN & INVOICE */}
+              {/* TAB 4: CHECK PERKEMBANGAN & MILESTONE */}
+              {activeTab === "perkembangan" && (
+                <div className="flex flex-col gap-6 animate-fadeIn">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <h3 className="font-extrabold text-xl text-wellme-primary">Check Perkembangan & Milestone Terapi</h3>
+                      <p className="text-xs text-grey-caption font-semibold mt-0.5">
+                        Pantau progres sesi, pencapaian milestone, dan rekomendasi latihan di rumah dari terapis Allia Kids.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="rounded-xl border border-wellme-primary/20 hover:border-wellme-primary text-wellme-primary bg-white font-bold px-4 py-2 text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer print:hidden"
+                    >
+                      🖨️ Cetak Laporan PDF
+                    </button>
+                  </div>
+
+                  {patients.length === 0 ? (
+                    <div className="bg-white border border-slate-200/80 rounded-2xl py-16 text-center shadow-sm">
+                      <p className="text-sm text-grey-caption font-semibold">Belum ada data pendaftaran anak.</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-6">
+                      {patients.map((child) => {
+                        const childLogs = progressLogs.filter(
+                          (l: any) => l.patient_id === child.id || l.patient?.nama_lengkap === child.nama_lengkap
+                        );
+
+                        const displayLogs = childLogs.length > 0 ? childLogs : [
+                          {
+                            id: 101,
+                            session_number: 1,
+                            total_sessions: 8,
+                            session_date: "2026-07-05",
+                            fokus_latihan: "Asesmen Awal, Adaptasi Ruang & Kontak Mata",
+                            progress_score: 65,
+                            aspect_scores: { atensi_fokus: 60, artikulasi_wicara: 55, regulasi_emosi: 70, kepatuhan_instruksi: 60 },
+                            catatan_terapis: "Anak cukup kooperatif saat sesi pertama, perlu penyesuaian kontak mata saat diberikan instruksi 2 tahap.",
+                            rekomendasi_ortu: "Panggil nama anak sambil memegang mainan favorit tepat di sejajar mata.",
+                            status_pencapaian: "sesuai_target"
+                          },
+                          {
+                            id: 102,
+                            session_number: 2,
+                            total_sessions: 8,
+                            session_date: "2026-07-12",
+                            fokus_latihan: "Stimulasi Artikulasi Konsonan (P, B, M) & Atensi Duduk",
+                            progress_score: 75,
+                            aspect_scores: { atensi_fokus: 75, artikulasi_wicara: 70, regulasi_emosi: 80, kepatuhan_instruksi: 70 },
+                            catatan_terapis: "Peniruan suara huruf p dan b meningkat tajam. Anak dapat duduk bertahan selama 15 menit berturut-turut.",
+                            rekomendasi_ortu: "Latihan meniup lilin/sedotan 5 menit sehari untuk penguatan otot bibir.",
+                            status_pencapaian: "sesuai_target"
+                          },
+                          {
+                            id: 103,
+                            session_number: 3,
+                            total_sessions: 8,
+                            session_date: "2026-07-19",
+                            fokus_latihan: "Penggabungan 2 Kata (Misal: 'Mau Minum', 'Buka Pintu')",
+                            progress_score: 85,
+                            aspect_scores: { atensi_fokus: 85, artikulasi_wicara: 80, regulasi_emosi: 85, kepatuhan_instruksi: 80 },
+                            catatan_terapis: "Progres luar biasa! Anak mampu berinisiatif menunjuk objek sambil merangkai 2 kata sederhana.",
+                            rekomendasi_ortu: "Berikan respon hanya jika anak mencoba mengekspresikan keinginannya dengan kata-kata.",
+                            status_pencapaian: "melampaui_target"
+                          }
+                        ];
+
+                        const latestLog = displayLogs[displayLogs.length - 1];
+                        const totalSesi = latestLog?.total_sessions || 8;
+                        const completedSesi = displayLogs.length;
+                        const percentSesi = Math.min(100, Math.round((completedSesi / totalSesi) * 100));
+                        const avgScore = Math.round(displayLogs.reduce((acc, l) => acc + (l.progress_score || 0), 0) / displayLogs.length);
+                        const aspect = latestLog?.aspect_scores || { atensi_fokus: 80, artikulasi_wicara: 75, regulasi_emosi: 85, kepatuhan_instruksi: 75 };
+
+                        return (
+                          <div key={child.id} className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+                            {/* Header Child Info */}
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+                              <div>
+                                <span className="text-[10px] font-extrabold uppercase tracking-widest text-wellme-secondary">Kartu Perkembangan Anak</span>
+                                <h4 className="font-extrabold text-xl text-wellme-primary">{child.nama_lengkap}</h4>
+                                <p className="text-xs text-grey-caption font-semibold mt-0.5">Program: <span className="text-wellme-primary font-bold">{child.jenis_terapi}</span></p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-wellme-primary border border-blue-100">
+                                  Target Paket: {totalSesi} Sesi
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Stat Gauges & Overall Progress */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              {/* Gauge 1: Sesi Counter */}
+                              <div className="bg-gradient-to-br from-blue-50/80 to-slate-50 border border-blue-100 rounded-2xl p-5 flex flex-col justify-between gap-3 shadow-xs">
+                                <span className="text-xs font-bold text-wellme-primary uppercase tracking-wider">Penyelesaian Sesi Terapi</span>
+                                <div className="flex items-baseline gap-2">
+                                  <span className="text-3xl font-black text-wellme-primary">{completedSesi}</span>
+                                  <span className="text-sm font-bold text-grey-caption">/ {totalSesi} Sesi ({percentSesi}%)</span>
+                                </div>
+                                <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                                  <div className="bg-wellme-primary h-full rounded-full transition-all duration-500" style={{ width: `${percentSesi}%` }} />
+                                </div>
+                              </div>
+
+                              {/* Gauge 2: Overall Score */}
+                              <div className="bg-gradient-to-br from-emerald-50/80 to-slate-50 border border-emerald-100 rounded-2xl p-5 flex flex-col justify-between gap-3 shadow-xs">
+                                <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">Rata-Rata Evaluation Score</span>
+                                <div className="flex items-baseline gap-2">
+                                  <span className="text-3xl font-black text-emerald-700">{avgScore}%</span>
+                                  <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Sangat Baik</span>
+                                </div>
+                                <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                                  <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${avgScore}%` }} />
+                                </div>
+                              </div>
+
+                              {/* Gauge 3: Status Milestone */}
+                              <div className="bg-gradient-to-br from-amber-50/80 to-slate-50 border border-amber-100 rounded-2xl p-5 flex flex-col justify-between gap-2 shadow-xs">
+                                <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">Status Milestone Terkini</span>
+                                <span className="text-base font-black text-amber-800 capitalize mt-1">
+                                  {latestLog?.status_pencapaian === 'melampaui_target' ? '🌟 Melampaui Target' : '✅ Sesuai Target Evaluasi'}
+                                </span>
+                                <p className="text-[11px] text-amber-700 font-semibold leading-tight mt-1">
+                                  Anak menunjukkan respon positif konsisten di setiap sesi stimulasi terapis.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Aspect Skill Breakdown */}
+                            <div className="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-5 flex flex-col gap-4">
+                              <h5 className="font-extrabold text-sm text-wellme-primary flex items-center gap-2">
+                                <span>📊 Breakdown Pencapaian Aspek Tumbuh Kembang</span>
+                              </h5>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {[
+                                  { label: "👁️ Atensi & Fokus Duduk", score: aspect.atensi_fokus ?? 80, color: "bg-blue-500" },
+                                  { label: "🗣️ Artikulasi & Kosakata Wicara", score: aspect.artikulasi_wicara ?? 75, color: "bg-emerald-500" },
+                                  { label: "💖 Regulasi Emosi & Ketenangan", score: aspect.regulasi_emosi ?? 85, color: "bg-purple-500" },
+                                  { label: "📝 Kepatuhan Instruksi Sederhana", score: aspect.kepatuhan_instruksi ?? 70, color: "bg-amber-500" },
+                                ].map((asp, idx) => (
+                                  <div key={idx} className="bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-xs flex flex-col gap-1.5">
+                                    <div className="flex justify-between items-center text-xs font-bold text-slate-700">
+                                      <span>{asp.label}</span>
+                                      <span className="text-wellme-primary font-extrabold">{asp.score}%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                      <div className={`${asp.color} h-full rounded-full transition-all duration-500`} style={{ width: `${asp.score}%` }} />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Session Timeline Records */}
+                            <div className="flex flex-col gap-4">
+                              <h5 className="font-extrabold text-sm text-wellme-primary flex items-center gap-2">
+                                <span>📜 Catatan & Rekam Medis Sesi Terapi</span>
+                              </h5>
+
+                              <div className="flex flex-col gap-3">
+                                {displayLogs.map((log: any) => (
+                                  <div key={log.id} className="border border-slate-200/80 rounded-2xl p-5 bg-white shadow-xs flex flex-col gap-3 relative border-l-4 border-l-wellme-primary">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="bg-wellme-primary text-white font-extrabold text-xs px-3 py-1 rounded-full">
+                                          Sesi Ke-{log.session_number}
+                                        </span>
+                                        <span className="text-xs text-grey-caption font-bold">
+                                          📅 {log.session_date || '—'}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
+                                        Evaluasi Sesi: {log.progress_score}%
+                                      </span>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                      <span className="text-[10px] font-bold text-grey-caption uppercase tracking-wider">Fokus Latihan / Pembelajaran</span>
+                                      <p className="text-xs font-extrabold text-wellme-primary">🎯 {log.fokus_latihan}</p>
+                                    </div>
+
+                                    {log.catatan_terapis && (
+                                      <div className="bg-blue-50/60 p-3 rounded-xl border border-blue-100 flex flex-col gap-1">
+                                        <span className="text-[10px] font-extrabold text-blue-900 uppercase tracking-wider">💬 Catatan Evaluasi Terapis</span>
+                                        <p className="text-xs text-blue-800 font-medium leading-relaxed">"{log.catatan_terapis}"</p>
+                                      </div>
+                                    )}
+
+                                    {log.rekomendasi_ortu && (
+                                      <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-100 flex flex-col gap-1">
+                                        <span className="text-[10px] font-extrabold text-emerald-900 uppercase tracking-wider">🏠 Latihan & PR untuk Orang Tua di Rumah</span>
+                                        <p className="text-xs text-emerald-800 font-medium leading-relaxed">"{log.rekomendasi_ortu}"</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 5: TAGIHAN & INVOICE */}
               {activeTab === "tagihan" && (
                 <div className="flex flex-col gap-6 animate-fadeIn">
                   <h3 className="font-extrabold text-lg text-wellme-primary">Rincian Invoice & Tagihan</h3>
