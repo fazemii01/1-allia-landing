@@ -110,6 +110,7 @@ export default function PortalOrangTua() {
   const [uploadingId, setUploadingId] = useState<number | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [paymentMethodMap, setPaymentMethodMap] = useState<Record<number, 'transfer' | 'cash'>>({});
 
   useEffect(() => {
     if (toast) {
@@ -118,14 +119,16 @@ export default function PortalOrangTua() {
     }
   }, [toast]);
 
-  const handleUploadProof = async (invoiceId: number, file: File) => {
+  const handleUploadProof = async (invoiceId: number, file: File, paymentMethod: string = "transfer") => {
     if (!token) return;
     setUploadingId(invoiceId);
     try {
       const formData = new FormData();
       formData.append("payment_proof", file);
+      formData.append("payment_method", paymentMethod);
 
-      const response = await fetch(`http://localhost:3001/api/invoices/me/${invoiceId}/upload-proof`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const response = await fetch(`${apiUrl}/api/invoices/me/${invoiceId}/upload-proof`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -654,39 +657,111 @@ export default function PortalOrangTua() {
                             </div>
                           )}
 
-                          {/* Bank details */}
-                          {inv.status !== 'sudah_bayar' && inv.status !== 'menunggu_verifikasi' && (
-                            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-2">
-                              <span className="text-[10px] font-bold text-wellme-primary uppercase tracking-wider">Pilihan Metode Pembayaran Resmi</span>
-                              {paymentMethods && paymentMethods.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-                                  {paymentMethods.map((pm) => (
-                                    <div key={pm.id} className="bg-white border border-slate-200/60 rounded-xl p-3 flex flex-col justify-between gap-1 shadow-sm">
-                                      <div className="flex items-center justify-between gap-2">
-                                        <span className="text-[10px] text-grey-caption font-bold uppercase">{pm.bank_name}</span>
-                                        {pm.icon_url && (
-                                          <img
-                                            src={pm.icon_url.startsWith('http') ? pm.icon_url : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${pm.icon_url}`}
-                                            alt={pm.bank_name}
-                                            className="h-4 w-auto object-contain max-w-[50px]"
-                                          />
+                          {/* Price Breakdown & Payment Method Section */}
+                          {(() => {
+                            const fullPrice = Number((inv as any).full_amount) || ((inv as any).payment_type === 'dp' || (inv as any).dp_percentage === 50 ? Number(inv.total_amount) * 2 : Number(inv.total_amount));
+                            const isDp = (inv as any).payment_type === 'dp' || (inv as any).dp_percentage === 50;
+                            const sisaPelunasan = isDp ? fullPrice - Number(inv.total_amount) : 0;
+                            const method = paymentMethodMap[inv.id] || 'transfer';
+
+                            return (
+                              <div className="flex flex-col gap-4">
+                                {/* Price Breakdown Card */}
+                                <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col gap-2">
+                                  <div className="flex justify-between items-center text-xs">
+                                    <span className="font-semibold text-grey-400">Harga Paket Layanan (100% Real Price):</span>
+                                    <span className="font-extrabold text-grey-600 line-through">{formatCurrency(fullPrice)}</span>
+                                  </div>
+                                  <div className="flex justify-between items-center text-xs">
+                                    <span className="font-semibold text-wellme-primary">Skema Tagihan:</span>
+                                    <span className="font-extrabold text-wellme-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                                      {isDp ? "DP 50%" : "Lunas 100%"}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between items-center text-sm font-extrabold text-wellme-primary pt-1 border-t border-slate-200/60">
+                                    <span>Jumlah Tagihan Ini ({isDp ? 'DP 50%' : '100%'}):</span>
+                                    <span className="text-base text-wellme-secondary font-mono">{formatCurrency(inv.total_amount)}</span>
+                                  </div>
+                                  {isDp && sisaPelunasan > 0 && (
+                                    <div className="flex justify-between items-center text-xs text-orange-700 bg-orange-50/80 p-2 rounded-lg border border-orange-100">
+                                      <span>Sisa Pelunasan Sesi Terapi:</span>
+                                      <span className="font-bold">{formatCurrency(sisaPelunasan)} (Dibayar saat sesi terapi)</span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Choice of Payment Method: Transfer vs Cash */}
+                                {inv.status !== 'sudah_bayar' && inv.status !== 'menunggu_verifikasi' && (
+                                  <div className="flex flex-col gap-3">
+                                    <span className="text-[10px] font-bold text-wellme-primary uppercase tracking-wider">Pilih Metode Pembayaran Anda</span>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => setPaymentMethodMap((m) => ({ ...m, [inv.id]: 'transfer' }))}
+                                        className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                                          method === 'transfer'
+                                            ? 'border-wellme-primary bg-[#EBF3FC] text-wellme-primary shadow-sm'
+                                            : 'border-slate-200 bg-white text-grey-400 hover:border-slate-300'
+                                        }`}
+                                      >
+                                        💳 Transfer Bank
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => setPaymentMethodMap((m) => ({ ...m, [inv.id]: 'cash' }))}
+                                        className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                                          method === 'cash'
+                                            ? 'border-wellme-primary bg-[#EBF3FC] text-wellme-primary shadow-sm'
+                                            : 'border-slate-200 bg-white text-grey-400 hover:border-slate-300'
+                                        }`}
+                                      >
+                                        💵 Tunai / Cash (Klinik)
+                                      </button>
+                                    </div>
+
+                                    {method === 'transfer' ? (
+                                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-2">
+                                        <span className="text-[10px] font-bold text-wellme-primary uppercase tracking-wider">Nomor Rekening Resmi Transfer</span>
+                                        {paymentMethods && paymentMethods.length > 0 ? (
+                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                                            {paymentMethods.map((pm) => (
+                                              <div key={pm.id} className="bg-white border border-slate-200/60 rounded-xl p-3 flex flex-col justify-between gap-1 shadow-sm">
+                                                <div className="flex items-center justify-between gap-2">
+                                                  <span className="text-[10px] text-grey-caption font-bold uppercase">{pm.bank_name}</span>
+                                                  {pm.icon_url && (
+                                                    <img
+                                                      src={pm.icon_url.startsWith('http') ? pm.icon_url : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${pm.icon_url}`}
+                                                      alt={pm.bank_name}
+                                                      className="h-4 w-auto object-contain max-w-[50px]"
+                                                    />
+                                                  )}
+                                                </div>
+                                                <div>
+                                                  <span className="font-extrabold text-sm text-wellme-primary tracking-wide font-mono select-all block">{pm.account_number}</span>
+                                                  <span className="text-[10px] text-grey-400 font-semibold mt-0.5 block">a.n. {pm.account_name}</span>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        ) : (
+                                          <p className="text-xs text-grey-caption font-medium">Silakan transfer ke rekening resmi Klinik Allia Kids.</p>
                                         )}
                                       </div>
-                                      <div>
-                                        <span className="font-extrabold text-sm text-wellme-primary tracking-wide font-mono select-all block">{pm.account_number}</span>
-                                        <span className="text-[10px] text-grey-400 font-semibold mt-0.5 block">a.n. {pm.account_name}</span>
+                                    ) : (
+                                      <div className="bg-emerald-50/80 border border-emerald-100 rounded-xl p-4 flex flex-col gap-2">
+                                        <span className="text-xs font-extrabold text-emerald-900 flex items-center gap-1.5">
+                                          💵 Pembayaran Tunai / Cash di Klinik
+                                        </span>
+                                        <p className="text-xs text-emerald-700 font-medium leading-relaxed">
+                                          Pembayaran secara tunai/cash dilakukan secara langsung di kasir Klinik Allia Kids. Jika Anda telah membayar secara tunai, silakan foto kuintansi/struk pembayaran menggunakan kamera HP Anda.
+                                        </p>
                                       </div>
-                                      {pm.instructions && (
-                                        <p className="text-[9px] text-grey-400 italic border-t border-slate-100 pt-1 mt-1 leading-tight">{pm.instructions}</p>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <p className="text-xs text-grey-caption font-medium">Silakan hubungi admin untuk informasi nomor rekening transfer.</p>
-                              )}
-                            </div>
-                          )}
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
 
                           {/* Invoice Items List */}
                           <div className="flex flex-col gap-2">
@@ -701,48 +776,72 @@ export default function PortalOrangTua() {
                             </div>
                           </div>
 
-                          {/* Total and CTA */}
+                          {/* Total and Actions */}
                           <div className="border-t border-slate-100 pt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-bold text-grey-caption uppercase tracking-wider">Total Tagihan</span>
+                              <span className="text-[10px] font-bold text-grey-caption uppercase tracking-wider">Total Tagihan Saat Ini</span>
                               <span className="text-lg font-black text-wellme-primary">{formatCurrency(inv.total_amount)}</span>
                             </div>
                             
                             {inv.status !== 'sudah_bayar' && inv.status !== 'menunggu_verifikasi' && (
-                              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-stretch sm:items-center">
+                              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
                                 <a
                                   href={`https://wa.me/6281234567890?text=Halo%20Admin%20Allia%20Kids,%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20Invoice%20${inv.invoice_number}%20sebesar%20${formatCurrency(inv.total_amount)}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="rounded-xl border border-wellme-primary/20 hover:border-wellme-primary text-wellme-primary font-bold px-5 py-2.5 text-xs transition-all text-center flex items-center justify-center cursor-pointer"
+                                  className="rounded-xl border border-wellme-primary/20 hover:border-wellme-primary text-wellme-primary font-bold px-4 py-2.5 text-xs transition-all text-center flex items-center justify-center cursor-pointer"
                                 >
                                   Tanya Admin via WA
                                 </a>
-                                <label className="relative rounded-xl bg-wellme-secondary-gradient hover:brightness-110 text-white font-bold px-6 py-2.5 text-xs transition-all shadow cursor-pointer text-center flex items-center justify-center">
-                                  {uploadingId === inv.id ? (
-                                    <span className="flex items-center gap-1.5">
-                                      <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                      </svg>
-                                      Mengunggah...
-                                    </span>
-                                  ) : (
-                                    <span>Unggah Bukti Transfer</span>
-                                  )}
-                                  <input
-                                    type="file"
-                                    accept="image/*,application/pdf"
-                                    disabled={uploadingId === inv.id}
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) {
-                                        handleUploadProof(inv.id, file);
-                                      }
-                                    }}
-                                    className="hidden"
-                                  />
-                                </label>
+
+                                {paymentMethodMap[inv.id] === 'cash' ? (
+                                  <>
+                                    {/* Camera Capture Button for Cash */}
+                                    <label className="relative rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 text-xs transition-all shadow cursor-pointer text-center flex items-center justify-center gap-1.5">
+                                      <span>📷 Foto Struk Cash (Kamera)</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        capture="environment"
+                                        disabled={uploadingId === inv.id}
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) {
+                                            handleUploadProof(inv.id, file, 'cash');
+                                          }
+                                        }}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                  </>
+                                ) : (
+                                  /* File Upload Button for Bank Transfer */
+                                  <label className="relative rounded-xl bg-wellme-secondary-gradient hover:brightness-110 text-white font-bold px-5 py-2.5 text-xs transition-all shadow cursor-pointer text-center flex items-center justify-center">
+                                    {uploadingId === inv.id ? (
+                                      <span className="flex items-center gap-1.5">
+                                        <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                        </svg>
+                                        Mengunggah...
+                                      </span>
+                                    ) : (
+                                      <span>Unggah Bukti Transfer</span>
+                                    )}
+                                    <input
+                                      type="file"
+                                      accept="image/*,application/pdf"
+                                      disabled={uploadingId === inv.id}
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                          handleUploadProof(inv.id, file, 'transfer');
+                                        }
+                                      }}
+                                      className="hidden"
+                                    />
+                                  </label>
+                                )}
                               </div>
                             )}
                           </div>

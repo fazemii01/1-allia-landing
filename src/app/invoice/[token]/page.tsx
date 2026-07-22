@@ -14,6 +14,10 @@ interface InvoiceData {
   due_date: string
   paid_at: string | null
   total_amount: number
+  full_amount?: number
+  payment_type?: string
+  dp_percentage?: number
+  payment_method?: string
   items: InvoiceItem[]
   payment_proof: string | null
   patient: {
@@ -213,9 +217,37 @@ export default async function InvoicePage({ params }: { params: Promise<{ token:
                 </tbody>
               </table>
 
+              {/* Price Breakdown Details */}
+              {(() => {
+                const fullPrice = Number(invoice.full_amount) || (invoice.payment_type === 'dp' || invoice.dp_percentage === 50 ? Number(invoice.total_amount) * 2 : Number(invoice.total_amount));
+                const isDp = invoice.payment_type === 'dp' || invoice.dp_percentage === 50;
+                const sisaPelunasan = isDp ? fullPrice - Number(invoice.total_amount) : 0;
+
+                return (
+                  <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col gap-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-gray-500 font-semibold">Harga Paket Sesi (100% Real Price):</span>
+                      <span className="font-bold text-gray-700 font-mono">{formatRp(fullPrice)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-gray-500 font-semibold">Skema Tagihan Invoice:</span>
+                      <span className="font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                        {isDp ? 'DP 50%' : '100% Lunas'}
+                      </span>
+                    </div>
+                    {isDp && sisaPelunasan > 0 && (
+                      <div className="flex justify-between items-center text-xs text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-1">
+                        <span className="font-medium">Sisa Pelunasan Nanti (Saat Sesi):</span>
+                        <span className="font-bold font-mono">{formatRp(sisaPelunasan)}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* Total */}
               <div className="mt-4 pt-4 border-t-2 border-gray-100 flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Tagihan</span>
+                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Tagihan Saat Ini</span>
                 <span
                   style={{ color: '#0f2d4a' }}
                   className="text-2xl font-extrabold tracking-tight font-mono"

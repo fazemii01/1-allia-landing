@@ -578,6 +578,11 @@ function ApplyPageContent() {
           (l.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi")
       );
       const titleLayanan = selectedLayanan ? selectedLayanan.title : formData.jenis_terapi;
+      const selectedProgram = selectedLayanan?.programs?.find(
+        (p) => p.title === formData.program || p.title.includes(formData.program)
+      );
+      const rawPriceStr = selectedProgram?.harga || selectedLayanan?.stats?.mulai_dari || "";
+      const numericPrice = parseInt(rawPriceStr.replace(/[^0-9]/g, "")) || 0;
 
       // Determine clean jenis_terapi string for backend
       const normalizedJenisTerapi = isWicaraService(formData.jenis_terapi) ? "terapi_wicara" : "hipoterapi";
@@ -585,7 +590,8 @@ function ApplyPageContent() {
       const payload = {
         ...formData,
         jenis_terapi: normalizedJenisTerapi,
-        program_detail: `${titleLayanan}: ${formData.program || titleLayanan}`
+        program_detail: `${titleLayanan}: ${formData.program || titleLayanan}`,
+        total_price: numericPrice > 0 ? numericPrice : undefined,
       };
       
       const res = await fetch(`${dashboardUrl}/api/apply`, {
@@ -1564,8 +1570,16 @@ function ApplyPageContent() {
                   </div>
 
                   {(() => {
+                    const selLay = dbLayanan.find(
+                      (l) => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi
+                    );
+                    const selProg = selLay?.programs?.find(
+                      (p) => p.title === formData.program || p.title.includes(formData.program)
+                    );
+                    const priceStr = selProg?.harga || selLay?.stats?.mulai_dari || "";
+                    const parsed = parseInt(priceStr.replace(/[^0-9]/g, "")) || 0;
                     const isHipo = (formData.jenis_terapi || '').toLowerCase().includes('hipno') || (formData.jenis_terapi || '').toLowerCase().includes('hipot');
-                    const fullAmount = isHipo ? 550000 : 150000;
+                    const fullAmount = parsed > 0 ? parsed : (isHipo ? 550000 : 150000);
                     const dpAmount = Math.round(fullAmount * 0.5);
 
                     return (
