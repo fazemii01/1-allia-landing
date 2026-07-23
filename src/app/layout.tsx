@@ -15,6 +15,7 @@ const pacifico = Pacifico({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://alliakids.com"),
   title: "Allia Kids - Klinik Tumbuh Kembang & Hipnoterapi Anak Terpercaya",
   description: "Layanan tumbuh kembang anak terpercaya di Indonesia: hipnoterapi anak, terapi wicara, terapi perilaku, dan skrining tumbuh kembang profesional.",
   icons: {
