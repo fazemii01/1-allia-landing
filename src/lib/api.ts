@@ -186,13 +186,13 @@ export interface ClientAppointment {
   duration_minutes: number;
   notes: string;
   status: string;
-  patient: {
+  patient?: {
     nama_lengkap: string;
-  };
-  therapist: {
+  } | null;
+  therapist?: {
     name: string;
-    specialization: string;
-  };
+    specialization?: string | null;
+  } | null;
 }
 
 export const appointmentsApi = {
@@ -217,9 +217,9 @@ export interface ClientInvoice {
   paid_at: string | null;
   payment_proof?: string;
   items: { description: string; amount: number }[];
-  patient: {
+  patient?: {
     nama_lengkap: string;
-  };
+  } | null;
 }
 
 export const invoicesApi = {

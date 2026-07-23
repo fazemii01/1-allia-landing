@@ -439,9 +439,13 @@ export default function PortalOrangTua() {
                           .map((appt) => (
                             <div key={appt.id} className="border border-slate-100 rounded-xl p-4 flex justify-between items-center gap-4 bg-slate-50/50">
                               <div className="flex flex-col gap-1">
-                                <span className="text-[10px] font-bold text-wellme-secondary uppercase tracking-wider">{appt.therapist.specialization}</span>
-                                <h4 className="font-bold text-sm text-wellme-primary">Sesi Terapi: {appt.patient.nama_lengkap}</h4>
-                                <span className="text-xs text-grey-caption font-semibold">Bersama {appt.therapist.name}</span>
+                                <span className="text-[10px] font-bold text-wellme-secondary uppercase tracking-wider">
+                                  {appt.therapist?.specialization || "Terapis Allia Kids"}
+                                </span>
+                                <h4 className="font-bold text-sm text-wellme-primary">Sesi Terapi: {appt.patient?.nama_lengkap || "-"}</h4>
+                                <span className="text-xs text-grey-caption font-semibold">
+                                  {appt.therapist?.name ? `Bersama ${appt.therapist.name}` : "Terapis Belum Ditentukan"}
+                                </span>
                               </div>
                               <div className="text-right">
                                 <span className="text-xs font-bold text-wellme-primary block">{formatDate(appt.scheduled_at).split(" WIB")[0]}</span>
@@ -570,8 +574,10 @@ export default function PortalOrangTua() {
                               </span>
                               <span className="text-[10px] font-semibold text-grey-caption">Durasi: {appt.duration_minutes} Menit</span>
                             </div>
-                            <h4 className="font-extrabold text-base text-wellme-primary mt-1">Sesi: {appt.patient.nama_lengkap}</h4>
-                            <p className="text-xs text-grey-caption font-semibold">Terapis: {appt.therapist.name} ({appt.therapist.specialization})</p>
+                            <h4 className="font-extrabold text-base text-wellme-primary mt-1">Sesi: {appt.patient?.nama_lengkap || "-"}</h4>
+                            <p className="text-xs text-grey-caption font-semibold">
+                              Terapis: {appt.therapist ? `${appt.therapist.name}${appt.therapist.specialization ? ` (${appt.therapist.specialization})` : ""}` : "Belum ditentukan"}
+                            </p>
                             {appt.notes && (
                               <p className="text-xs text-grey-caption font-semibold mt-1 bg-slate-50 p-2 rounded-lg border border-slate-100 max-w-lg">
                                 💬 Catatan: "{appt.notes}"
@@ -816,7 +822,7 @@ export default function PortalOrangTua() {
                           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-3">
                             <div className="flex flex-col">
                               <span className="text-xs font-bold text-wellme-secondary">{inv.invoice_number}</span>
-                              <h4 className="font-extrabold text-base text-wellme-primary">Pasien: {inv.patient.nama_lengkap}</h4>
+                              <h4 className="font-extrabold text-base text-wellme-primary">Pasien: {inv.patient?.nama_lengkap || "-"}</h4>
                             </div>
                             <div className="flex items-center gap-2.5">
                               <span className={`text-[10px] font-bold px-3 py-1 rounded-full capitalize ${
