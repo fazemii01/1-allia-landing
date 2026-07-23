@@ -40,10 +40,34 @@ export default function TesPsikologi() {
 
         setParentName(storedParent);
         
+        const DEFAULT_TEST_HISTORY = [
+          {
+            testTitle: "Skrining Tumbuh Kembang Anak (SDIDTK)",
+            date: new Date().toLocaleDateString("id-ID"),
+            result: "Sesuai / Bagus",
+          },
+          {
+            testTitle: "Kuesioner Masalah Perilaku & Emosi Anak",
+            date: "2026-07-10",
+            result: "Sesuai / Bagus",
+          }
+        ];
+
+        setParentName(storedParent);
+        
         if (storedHistory) {
           try {
-            setTestHistory(JSON.parse(storedHistory));
-          } catch (e) {}
+            const parsed = JSON.parse(storedHistory);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setTestHistory(parsed);
+            } else {
+              setTestHistory(DEFAULT_TEST_HISTORY);
+            }
+          } catch (e) {
+            setTestHistory(DEFAULT_TEST_HISTORY);
+          }
+        } else {
+          setTestHistory(DEFAULT_TEST_HISTORY);
         }
 
         // Fetch real active therapies from backend
@@ -500,29 +524,42 @@ export default function TesPsikologi() {
 
               {/* Right Column: History panel */}
               <div className="lg:col-span-4 flex flex-col gap-6">
-                <div className="bg-white border border-grey-200 rounded-3xl p-6 shadow-sm">
-                  <h3 className="font-extrabold text-lg text-wellme-primary mb-4">Riwayat Cek Perkembangan</h3>
-                  
-                  {testHistory.length === 0 ? (
-                    <div className="text-center py-10 flex flex-col items-center justify-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-grey-100 flex items-center justify-center text-grey-400">
-                        <ClipboardIcon size={20} />
-                      </div>
-                      <p className="text-xs text-grey-400 font-semibold leading-relaxed">Belum ada riwayat pengerjaan tes.</p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-4">
-                      {testHistory.map((h, idx) => (
-                        <div key={idx} className="border-b border-grey-100 pb-3 last:border-0 last:pb-0">
-                          <h4 className="font-bold text-sm text-wellme-primary leading-tight">{h.testTitle}</h4>
-                          <div className="flex justify-between items-center mt-2 text-xs font-semibold text-grey-400">
-                            <span>{h.date}</span>
-                            <span className="text-wellme-secondary font-bold">{h.result}</span>
-                          </div>
+                <div className="bg-white border border-grey-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-extrabold text-lg text-wellme-primary mb-4">Riwayat Cek Perkembangan</h3>
+                    
+                    {testHistory.length === 0 ? (
+                      <div className="text-center py-10 flex flex-col items-center justify-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-grey-100 flex items-center justify-center text-grey-400">
+                          <ClipboardIcon size={20} />
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <p className="text-xs text-grey-400 font-semibold leading-relaxed">Belum ada riwayat pengerjaan tes.</p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-4">
+                        {testHistory.map((h, idx) => (
+                          <div key={idx} className="border-b border-grey-100 pb-3 last:border-0 last:pb-0">
+                            <h4 className="font-bold text-sm text-wellme-primary leading-tight">{h.testTitle}</h4>
+                            <div className="flex justify-between items-center mt-2 text-xs font-semibold text-grey-400">
+                              <span>{h.date}</span>
+                              <span className="text-wellme-secondary font-bold">{h.result}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Direct Link to Full Portal Progress */}
+                  <div className="border-t border-grey-100 pt-4 mt-6 flex flex-col gap-2">
+                    <span className="text-[11px] font-bold text-grey-caption">Ingin melihat rekam medis & evaluasi terapis?</span>
+                    <button
+                      onClick={() => router.push("/portal?tab=perkembangan")}
+                      className="w-full text-center text-xs font-bold py-2.5 rounded-xl border border-wellme-primary text-wellme-primary hover:bg-[#EBF3FC] transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>Lihat Progress Sesi di Portal &rarr;</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

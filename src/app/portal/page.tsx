@@ -14,6 +14,25 @@ import {
   ClientInvoice,
   PaymentMethodItem
 } from "@/lib/api";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Calendar, 
+  TrendingUp, 
+  CreditCard, 
+  Printer, 
+  MessageSquare, 
+  Target, 
+  Home, 
+  Sparkles, 
+  CheckCircle,
+  Eye,
+  Volume2,
+  Heart,
+  FileText,
+  BarChart2,
+  BookOpen
+} from "lucide-react";
 
 const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
   {
@@ -236,32 +255,20 @@ export default function PortalOrangTua() {
   }
 
   const tabIcons = {
-    ringkasan: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
-    anak: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
-    jadwal: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-    perkembangan: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-      </svg>
-    ),
-    tagihan: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
+    ringkasan: <LayoutDashboard className="w-5 h-5 shrink-0 text-wellme-secondary" />,
+    anak: <Users className="w-5 h-5 shrink-0 text-amber-500" />,
+    jadwal: <Calendar className="w-5 h-5 shrink-0 text-blue-500" />,
+    perkembangan: <TrendingUp className="w-5 h-5 shrink-0 text-indigo-500" />,
+    tagihan: <CreditCard className="w-5 h-5 shrink-0 text-emerald-500" />,
   };
+
+  const PORTAL_NAV_ITEMS = [
+    { id: "ringkasan", label: "Dashboard" },
+    { id: "anak", label: "Data Anak" },
+    { id: "jadwal", label: "Jadwal Sesi" },
+    { id: "perkembangan", label: "Check Perkembangan" },
+    { id: "tagihan", label: "Tagihan & Invoice" },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-slate-50">
@@ -333,13 +340,7 @@ export default function PortalOrangTua() {
 
                 {isDropdownOpen && (
                   <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-lg z-50 p-2 flex flex-col gap-1">
-                    {[
-                      { id: "ringkasan", label: "Dashboard", icon: "📊" },
-                      { id: "anak", label: "Data Anak", icon: "👶" },
-                      { id: "jadwal", label: "Jadwal Sesi", icon: "📅" },
-                      { id: "perkembangan", label: "📈 Check Perkembangan", icon: "📈" },
-                      { id: "tagihan", label: "Tagihan & Invoice", icon: "💳" },
-                    ].map((tab) => (
+                    {PORTAL_NAV_ITEMS.map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => {
@@ -352,7 +353,7 @@ export default function PortalOrangTua() {
                             : "text-grey-450 hover:bg-slate-50 hover:text-wellme-primary"
                         }`}
                       >
-                        <span className="shrink-0">{tab.icon}</span>
+                        <span className="shrink-0">{tabIcons[tab.id as keyof typeof tabIcons]}</span>
                         <span>{tab.label}</span>
                       </button>
                     ))}
@@ -362,13 +363,7 @@ export default function PortalOrangTua() {
 
               {/* Desktop Sidebar Navigation */}
               <nav className="hidden lg:flex lg:flex-col bg-white border border-slate-200/80 rounded-2xl p-2 shadow-sm gap-1">
-                {[
-                  { id: "ringkasan", label: "Dashboard", icon: "📊" },
-                  { id: "anak", label: "Data Anak", icon: "👶" },
-                  { id: "jadwal", label: "Jadwal Sesi", icon: "📅" },
-                  { id: "perkembangan", label: "📈 Check Perkembangan", icon: "📈" },
-                  { id: "tagihan", label: "Tagihan & Invoice", icon: "💳" },
-                ].map((tab) => (
+                {PORTAL_NAV_ITEMS.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
@@ -378,7 +373,7 @@ export default function PortalOrangTua() {
                         : "text-grey-450 hover:bg-slate-50 hover:text-wellme-primary"
                     }`}
                   >
-                    <span className="shrink-0">{tab.icon}</span>
+                    <span className="shrink-0">{tabIcons[tab.id as keyof typeof tabIcons]}</span>
                     <span>{tab.label}</span>
                   </button>
                 ))}
@@ -610,9 +605,10 @@ export default function PortalOrangTua() {
                     <button
                       type="button"
                       onClick={() => window.print()}
-                      className="rounded-xl border border-wellme-primary/20 hover:border-wellme-primary text-wellme-primary bg-white font-bold px-4 py-2 text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer print:hidden"
+                      className="rounded-xl border border-wellme-primary/20 hover:border-wellme-primary text-wellme-primary bg-white font-bold px-4 py-2 text-xs transition-all flex items-center gap-2 shadow-xs cursor-pointer print:hidden"
                     >
-                      🖨️ Cetak Laporan PDF
+                      <Printer className="w-4 h-4 text-wellme-primary" />
+                      <span>Cetak Laporan PDF</span>
                     </button>
                   </div>
 
@@ -718,8 +714,18 @@ export default function PortalOrangTua() {
                               {/* Gauge 3: Status Milestone */}
                               <div className="bg-gradient-to-br from-amber-50/80 to-slate-50 border border-amber-100 rounded-2xl p-5 flex flex-col justify-between gap-2 shadow-xs">
                                 <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">Status Milestone Terkini</span>
-                                <span className="text-base font-black text-amber-800 capitalize mt-1">
-                                  {latestLog?.status_pencapaian === 'melampaui_target' ? '🌟 Melampaui Target' : '✅ Sesuai Target Evaluasi'}
+                                <span className="text-base font-black text-amber-800 capitalize mt-1 flex items-center gap-1.5">
+                                  {latestLog?.status_pencapaian === 'melampaui_target' ? (
+                                    <>
+                                      <Sparkles className="w-4 h-4 text-amber-600 inline" />
+                                      <span>Melampaui Target</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <CheckCircle className="w-4 h-4 text-emerald-600 inline" />
+                                      <span>Sesuai Target Evaluasi</span>
+                                    </>
+                                  )}
                                 </span>
                                 <p className="text-[11px] text-amber-700 font-semibold leading-tight mt-1">
                                   Anak menunjukkan respon positif konsisten di setiap sesi stimulasi terapis.
@@ -730,18 +736,22 @@ export default function PortalOrangTua() {
                             {/* Aspect Skill Breakdown */}
                             <div className="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-5 flex flex-col gap-4">
                               <h5 className="font-extrabold text-sm text-wellme-primary flex items-center gap-2">
-                                <span>📊 Breakdown Pencapaian Aspek Tumbuh Kembang</span>
+                                <BarChart2 className="w-4 h-4 text-wellme-secondary" />
+                                <span>Breakdown Pencapaian Aspek Tumbuh Kembang</span>
                               </h5>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {[
-                                  { label: "👁️ Atensi & Fokus Duduk", score: aspect.atensi_fokus ?? 80, color: "bg-blue-500" },
-                                  { label: "🗣️ Artikulasi & Kosakata Wicara", score: aspect.artikulasi_wicara ?? 75, color: "bg-emerald-500" },
-                                  { label: "💖 Regulasi Emosi & Ketenangan", score: aspect.regulasi_emosi ?? 85, color: "bg-purple-500" },
-                                  { label: "📝 Kepatuhan Instruksi Sederhana", score: aspect.kepatuhan_instruksi ?? 70, color: "bg-amber-500" },
+                                  { label: "Atensi & Fokus Duduk", icon: <Eye className="w-4 h-4 text-blue-500" />, score: aspect.atensi_fokus ?? 80, color: "bg-blue-500" },
+                                  { label: "Artikulasi & Kosakata Wicara", icon: <Volume2 className="w-4 h-4 text-emerald-500" />, score: aspect.artikulasi_wicara ?? 75, color: "bg-emerald-500" },
+                                  { label: "Regulasi Emosi & Ketenangan", icon: <Heart className="w-4 h-4 text-purple-500" />, score: aspect.regulasi_emosi ?? 85, color: "bg-purple-500" },
+                                  { label: "Kepatuhan Instruksi Sederhana", icon: <CheckCircle className="w-4 h-4 text-amber-500" />, score: aspect.kepatuhan_instruksi ?? 70, color: "bg-amber-500" },
                                 ].map((asp, idx) => (
                                   <div key={idx} className="bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-xs flex flex-col gap-1.5">
                                     <div className="flex justify-between items-center text-xs font-bold text-slate-700">
-                                      <span>{asp.label}</span>
+                                      <div className="flex items-center gap-2">
+                                        {asp.icon}
+                                        <span>{asp.label}</span>
+                                      </div>
                                       <span className="text-wellme-primary font-extrabold">{asp.score}%</span>
                                     </div>
                                     <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
@@ -755,7 +765,8 @@ export default function PortalOrangTua() {
                             {/* Session Timeline Records */}
                             <div className="flex flex-col gap-4">
                               <h5 className="font-extrabold text-sm text-wellme-primary flex items-center gap-2">
-                                <span>📜 Catatan & Rekam Medis Sesi Terapi</span>
+                                <BookOpen className="w-4 h-4 text-wellme-secondary" />
+                                <span>Catatan & Rekam Medis Sesi Terapi</span>
                               </h5>
 
                               <div className="flex flex-col gap-3">
@@ -766,8 +777,9 @@ export default function PortalOrangTua() {
                                         <span className="bg-wellme-primary text-white font-extrabold text-xs px-3 py-1 rounded-full">
                                           Sesi Ke-{log.session_number}
                                         </span>
-                                        <span className="text-xs text-grey-caption font-bold">
-                                          📅 {log.session_date || '—'}
+                                        <span className="text-xs text-grey-caption font-bold flex items-center gap-1">
+                                          <Calendar className="w-3.5 h-3.5 text-grey-caption inline" />
+                                          {log.session_date || '—'}
                                         </span>
                                       </div>
                                       <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
@@ -776,20 +788,29 @@ export default function PortalOrangTua() {
                                     </div>
 
                                     <div className="flex flex-col gap-1">
-                                      <span className="text-[10px] font-bold text-grey-caption uppercase tracking-wider">Fokus Latihan / Pembelajaran</span>
-                                      <p className="text-xs font-extrabold text-wellme-primary">🎯 {log.fokus_latihan}</p>
+                                      <span className="text-[10px] font-bold text-grey-caption uppercase tracking-wider flex items-center gap-1">
+                                        <Target className="w-3 h-3 text-wellme-primary" />
+                                        Fokus Latihan / Pembelajaran
+                                      </span>
+                                      <p className="text-xs font-extrabold text-wellme-primary">{log.fokus_latihan}</p>
                                     </div>
 
                                     {log.catatan_terapis && (
                                       <div className="bg-blue-50/60 p-3 rounded-xl border border-blue-100 flex flex-col gap-1">
-                                        <span className="text-[10px] font-extrabold text-blue-900 uppercase tracking-wider">💬 Catatan Evaluasi Terapis</span>
+                                        <span className="text-[10px] font-extrabold text-blue-900 uppercase tracking-wider flex items-center gap-1">
+                                          <MessageSquare className="w-3 h-3 text-blue-700" />
+                                          Catatan Evaluasi Terapis
+                                        </span>
                                         <p className="text-xs text-blue-800 font-medium leading-relaxed">"{log.catatan_terapis}"</p>
                                       </div>
                                     )}
 
                                     {log.rekomendasi_ortu && (
                                       <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-100 flex flex-col gap-1">
-                                        <span className="text-[10px] font-extrabold text-emerald-900 uppercase tracking-wider">🏠 Latihan & PR untuk Orang Tua di Rumah</span>
+                                        <span className="text-[10px] font-extrabold text-emerald-900 uppercase tracking-wider flex items-center gap-1">
+                                          <Home className="w-3 h-3 text-emerald-700" />
+                                          Latihan & PR untuk Orang Tua di Rumah
+                                        </span>
                                         <p className="text-xs text-emerald-800 font-medium leading-relaxed">"{log.rekomendasi_ortu}"</p>
                                       </div>
                                     )}
