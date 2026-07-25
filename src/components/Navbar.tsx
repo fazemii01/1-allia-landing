@@ -135,7 +135,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="container mx-auto px-4 lg:px-10 sticky top-[16px] left-0 right-0 z-50">
+      <nav className="container mx-auto px-4 lg:px-10 sticky top-[16px] left-0 right-0 z-50 print:hidden">
       <div className="rounded-full bg-white/80 backdrop-blur-lg shadow-md px-4 lg:px-6 py-3 lg:py-4 z-20 relative border border-grey-100">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}

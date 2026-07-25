@@ -34,7 +34,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-wellme-800 text-white pt-16 pb-8 border-t border-wellme-800">
+    <footer className="bg-wellme-800 text-white pt-16 pb-8 border-t border-wellme-800 print:hidden">
       <div className="container mx-auto px-4 lg:px-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           {/* Logo & Description */}

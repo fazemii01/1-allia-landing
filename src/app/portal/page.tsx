@@ -31,7 +31,8 @@ import {
   Heart,
   FileText,
   BarChart2,
-  BookOpen
+  BookOpen,
+  Filter
 } from "lucide-react";
 
 const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
@@ -73,6 +74,7 @@ export default function PortalOrangTua() {
   const [invoices, setInvoices] = useState<ClientInvoice[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodItem[]>(DEFAULT_PAYMENT_METHODS);
   const [progressLogs, setProgressLogs] = useState<any[]>([]);
+  const [selectedProgramFilter, setSelectedProgramFilter] = useState<string>("all");
   
   // Loading & error
   const [loading, setLoading] = useState(true);
@@ -274,9 +276,9 @@ export default function PortalOrangTua() {
     <div className="flex flex-col min-h-screen w-full bg-slate-50">
       <Navbar />
 
-      <main className="flex-grow pt-24 pb-20 px-4 md:px-8 lg:px-16 max-w-7xl mx-auto w-full">
+      <main className="flex-grow pt-24 pb-20 px-4 md:px-8 lg:px-16 max-w-7xl mx-auto w-full print:pt-0 print:pb-0 print:px-0 print:max-w-none">
         {/* Header Profile Summary */}
-        <header className="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 mt-6">
+        <header className="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 mt-6 print:hidden">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 shrink-0 rounded-full bg-wellme-primary text-white flex items-center justify-center font-extrabold text-xl">
               {parentName.slice(0, 2).toUpperCase()}
@@ -311,7 +313,7 @@ export default function PortalOrangTua() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Sidebar Navigation (Desktop) / Dropdown Selector (Mobile) */}
-            <div className="lg:col-span-3 w-full shrink-0 select-none">
+            <div className="lg:col-span-3 w-full shrink-0 select-none print:hidden">
               {/* Mobile Dropdown Selector */}
               <div className="lg:hidden w-full relative mb-2">
                 <button
@@ -381,7 +383,7 @@ export default function PortalOrangTua() {
             </div>
 
             {/* Right Display Area */}
-            <section className="lg:col-span-9 flex flex-col gap-6">
+            <section className="lg:col-span-9 flex flex-col gap-6 print:w-full print:col-span-12">
               {/* TAB 1: RINGKASAN */}
               {activeTab === "ringkasan" && (
                 <div className="flex flex-col gap-6 animate-fadeIn">
@@ -612,16 +614,82 @@ export default function PortalOrangTua() {
                     </button>
                   </div>
 
-                  {patients.length === 0 ? (
-                    <div className="bg-white border border-slate-200/80 rounded-2xl py-16 text-center shadow-sm">
-                      <p className="text-sm text-grey-caption font-semibold">Belum ada data pendaftaran anak.</p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-6">
-                      {patients.map((child) => {
-                        const childLogs = progressLogs.filter(
-                          (l: any) => l.patient_id === child.id || l.patient?.nama_lengkap === child.nama_lengkap
+                  {/* Program Filter Bar & Patient List */}
+                  {(() => {
+                    const availablePrograms = Array.from(
+                      new Set([
+                        ...patients.map((p) => p.jenis_terapi).filter(Boolean),
+                        ...progressLogs.map((l) => l.program_name).filter(Boolean),
+                      ])
+                    );
+
+                    const filteredPatients = selectedProgramFilter === "all"
+                      ? patients
+                      : patients.filter(
+                          (p) =>
+                            p.jenis_terapi === selectedProgramFilter ||
+                            progressLogs.some(
+                              (l) =>
+                                (l.patient_id === p.id || l.patient?.nama_lengkap === p.nama_lengkap) &&
+                                l.program_name === selectedProgramFilter
+                            )
                         );
+
+                    return (
+                      <div className="flex flex-col gap-6">
+                        {availablePrograms.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-2 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                            <span className="text-xs font-bold text-wellme-primary flex items-center gap-1.5 px-1 mr-1">
+                              <Filter className="w-3.5 h-3.5 text-wellme-secondary" />
+                              <span>Filter Program:</span>
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedProgramFilter("all")}
+                              className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                                selectedProgramFilter === "all"
+                                  ? "bg-wellme-primary text-white shadow-xs"
+                                  : "bg-slate-100 text-grey-450 hover:bg-slate-200 hover:text-wellme-primary"
+                              }`}
+                            >
+                              Semua Program ({patients.length})
+                            </button>
+                            {availablePrograms.map((prog) => {
+                              const count = patients.filter((p) => p.jenis_terapi === prog).length;
+                              return (
+                                <button
+                                  key={prog}
+                                  type="button"
+                                  onClick={() => setSelectedProgramFilter(prog)}
+                                  className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer capitalize ${
+                                    selectedProgramFilter === prog
+                                      ? "bg-wellme-primary text-white shadow-xs"
+                                      : "bg-slate-100 text-grey-450 hover:bg-slate-200 hover:text-wellme-primary"
+                                  }`}
+                                >
+                                  {prog.replace(/_/g, ' ')} {count > 0 && `(${count})`}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {patients.length === 0 ? (
+                          <div className="bg-white border border-slate-200/80 rounded-2xl py-16 text-center shadow-sm">
+                            <p className="text-sm text-grey-caption font-semibold">Belum ada data pendaftaran anak.</p>
+                          </div>
+                        ) : filteredPatients.length === 0 ? (
+                          <div className="bg-white border border-slate-200/80 rounded-2xl py-16 text-center shadow-sm">
+                            <p className="text-sm text-grey-caption font-semibold">Tidak ditemukan pendaftaran anak untuk program yang dipilih.</p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-6">
+                            {filteredPatients.map((child) => {
+                              const childLogs = progressLogs.filter(
+                                (l: any) =>
+                                  (l.patient_id === child.id || l.patient?.nama_lengkap === child.nama_lengkap) &&
+                                  (selectedProgramFilter === "all" || l.program_name === selectedProgramFilter || child.jenis_terapi === selectedProgramFilter)
+                              );
 
                         const latestLog = childLogs.length > 0 ? childLogs[childLogs.length - 1] : null;
                         const totalSesi = latestLog?.total_sessions || 8;
@@ -633,9 +701,48 @@ export default function PortalOrangTua() {
                         const aspect = latestLog?.aspect_scores || null;
 
                         return (
-                          <div key={child.id} className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
-                            {/* Header Child Info */}
-                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+                          <div key={child.id} className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-6 print:border-none print:shadow-none print:p-0 print:mb-12">
+                            {/* Official Clinic Letterhead / Kop Surat (Visible ONLY on print) */}
+                            <div className="hidden print:flex flex-col gap-3 border-b-2 border-slate-800 pb-4 mb-2">
+                              <div className="flex justify-between items-start">
+                                <div className="flex flex-col">
+                                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">KLINIK ALLIA KIDS</h2>
+                                  <p className="text-xs font-bold text-slate-700">Pusat Layanan Stimulasi, Terapi Tumbuh Kembang & Hipnoterapi Anak</p>
+                                  <p className="text-[10px] text-slate-500 mt-1">Perum Adara Park 2, Blok D17, Karanganyar, Kunir, Lumajang | WA: +62 851-3851-1348</p>
+                                </div>
+                                <div className="text-right flex flex-col items-end">
+                                  <span className="text-xs font-black uppercase bg-slate-100 text-slate-800 px-3 py-1 rounded border border-slate-300">
+                                    Laporan Rekam Medis Terapi
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 mt-1">
+                                    Tanggal Cetak: {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Official Patient Info Block (Visible ONLY on print) */}
+                            <div className="hidden print:grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-300 text-xs mb-2">
+                              <div>
+                                <span className="font-semibold text-slate-500 block">Nama Pasien Anak:</span>
+                                <span className="font-extrabold text-slate-900 text-sm">{child.nama_lengkap}</span>
+                              </div>
+                              <div>
+                                <span className="font-semibold text-slate-500 block">Program Terapi:</span>
+                                <span className="font-extrabold text-slate-900 text-sm capitalize">{child.jenis_terapi?.replace(/_/g, ' ')}</span>
+                              </div>
+                              <div>
+                                <span className="font-semibold text-slate-500 block">Orang Tua / Wali:</span>
+                                <span className="font-bold text-slate-800">{parentName}</span>
+                              </div>
+                              <div>
+                                <span className="font-semibold text-slate-500 block">Status Terapi:</span>
+                                <span className="font-bold text-slate-800">{childLogs.length} Sesi Terlaksana / Target {totalSesi} Sesi</span>
+                              </div>
+                            </div>
+
+                            {/* Header Child Info (Screen View Only) */}
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4 print:hidden">
                               <div>
                                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-wellme-secondary">Kartu Perkembangan Anak</span>
                                 <h4 className="font-extrabold text-xl text-wellme-primary">{child.nama_lengkap}</h4>
@@ -794,13 +901,27 @@ export default function PortalOrangTua() {
                             </div>
                           </>
                         )}
+                            {/* Official Signature Footer (Visible ONLY on print) */}
+                            <div className="hidden print:grid grid-cols-2 gap-8 pt-8 mt-6 border-t border-slate-300 text-center text-xs">
+                              <div className="flex flex-col items-center gap-14">
+                                <span className="font-bold text-slate-700">Orang Tua / Wali Pasien,</span>
+                                <div className="border-b border-slate-600 w-48 font-extrabold text-slate-900">{parentName}</div>
+                              </div>
+                              <div className="flex flex-col items-center gap-14">
+                                <span className="font-bold text-slate-700">Tim Terapis Allia Kids,</span>
+                                <div className="border-b border-slate-600 w-48 font-extrabold text-slate-900">( ............................................ )</div>
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
                     </div>
                   )}
                 </div>
-              )}
+              );
+            })()}
+          </div>
+        )}
 
               {/* TAB 5: TAGIHAN & INVOICE */}
               {activeTab === "tagihan" && (

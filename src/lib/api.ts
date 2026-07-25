@@ -97,6 +97,8 @@ export interface LayananItem {
   programs: LayananProgram[];
   is_active: boolean;
   sort_order: number;
+  allow_dp?: boolean;
+  dp_percentage?: number;
 }
 
 export interface LayananCategory {

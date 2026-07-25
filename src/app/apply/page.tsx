@@ -1595,68 +1595,83 @@ function ApplyPageContent() {
                 </div>
 
                 {/* Skema & Opsi Pembayaran (DP 50% vs Lunas) */}
-                <div className="flex flex-col gap-3 pt-2">
-                  <div className="flex flex-col">
-                    <h4 className="text-sm font-extrabold text-wellme-primary flex items-center gap-2">
-                      <span>💳 Skema Pembayaran Sesi Terapi</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">
-                        Opsi DP 50% Tersedia
-                      </span>
-                    </h4>
-                    <p className="text-xs text-grey-400 font-medium">Pilih metode pembayaran yang paling nyaman untuk keluarga Anda</p>
-                  </div>
+                {(() => {
+                  const selLay = dbLayanan.find(
+                    (l) => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi
+                  );
+                  const isDpAllowed = selLay ? selLay.allow_dp !== false : true;
+                  const selProg = selLay?.programs?.find(
+                    (p) => p.title === formData.program || p.title.includes(formData.program)
+                  );
+                  const priceStr = selProg?.harga || selLay?.stats?.mulai_dari || "";
+                  const parsed = parseInt(priceStr.replace(/[^0-9]/g, "")) || 0;
+                  const isHipo = (formData.jenis_terapi || '').toLowerCase().includes('hipno') || (formData.jenis_terapi || '').toLowerCase().includes('hipot');
+                  const fullAmount = parsed > 0 ? parsed : (isHipo ? 550000 : 150000);
+                  const dpAmount = Math.round(fullAmount * 0.5);
 
-                  {(() => {
-                    const selLay = dbLayanan.find(
-                      (l) => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi
-                    );
-                    const selProg = selLay?.programs?.find(
-                      (p) => p.title === formData.program || p.title.includes(formData.program)
-                    );
-                    const priceStr = selProg?.harga || selLay?.stats?.mulai_dari || "";
-                    const parsed = parseInt(priceStr.replace(/[^0-9]/g, "")) || 0;
-                    const isHipo = (formData.jenis_terapi || '').toLowerCase().includes('hipno') || (formData.jenis_terapi || '').toLowerCase().includes('hipot');
-                    const fullAmount = parsed > 0 ? parsed : (isHipo ? 550000 : 150000);
-                    const dpAmount = Math.round(fullAmount * 0.5);
+                  const effectiveOption = isDpAllowed ? formData.payment_option : 'full';
 
-                    return (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Option A: DP 50% */}
-                        <div
-                          onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'dp_50' }))}
-                          className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
-                            formData.payment_option === 'dp_50'
-                              ? 'bg-blue-50/70 border-wellme-primary shadow-md'
-                              : 'bg-white border-grey-200 hover:border-grey-300'
-                          }`}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">
-                                Rekomendasi
-                              </span>
-                              <h5 className="font-extrabold text-sm text-wellme-primary">Bayar DP 50%</h5>
-                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
-                                Bayar 50% sekarang, sisa 50% dilunasi saat sesi pertama.
-                              </p>
+                  return (
+                    <div className="flex flex-col gap-3 pt-2">
+                      <div className="flex flex-col">
+                        <h4 className="text-sm font-extrabold text-wellme-primary flex items-center gap-2">
+                          <span>💳 Skema Pembayaran Sesi Terapi</span>
+                          {isDpAllowed ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">
+                              Opsi DP 50% Tersedia
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">
+                              Pelunasan 100% (Tanpa DP)
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-xs text-grey-400 font-medium">
+                          {isDpAllowed
+                            ? "Pilih metode pembayaran yang paling nyaman untuk keluarga Anda"
+                            : "Layanan ini mensyaratkan pelunasan lunas 100% di awal pendaftaran."}
+                        </p>
+                      </div>
+
+                      <div className={`grid grid-cols-1 ${isDpAllowed ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-3`}>
+                        {/* Option A: DP 50% (Only displayed when allow_dp is true) */}
+                        {isDpAllowed && (
+                          <div
+                            onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'dp_50' }))}
+                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
+                              effectiveOption === 'dp_50'
+                                ? 'bg-blue-50/70 border-wellme-primary shadow-md'
+                                : 'bg-white border-grey-200 hover:border-grey-300'
+                            }`}
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">
+                                  Rekomendasi
+                                </span>
+                                <h5 className="font-extrabold text-sm text-wellme-primary">Bayar DP 50%</h5>
+                                <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
+                                  Bayar 50% sekarang, sisa 50% dilunasi saat sesi pertama.
+                                </p>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
+                                effectiveOption === 'dp_50' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
+                              }`}>
+                                {effectiveOption === 'dp_50' && <span className="text-xs font-bold">✓</span>}
+                              </div>
                             </div>
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
-                              formData.payment_option === 'dp_50' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
-                            }`}>
-                              {formData.payment_option === 'dp_50' && <span className="text-xs font-bold">✓</span>}
+                            <div className="border-t border-grey-200/60 pt-2 flex justify-between items-baseline">
+                              <span className="text-xs font-bold text-grey-400">Bayar Sekarang:</span>
+                              <span className="text-base font-extrabold text-wellme-primary">Rp {dpAmount.toLocaleString('id-ID')}</span>
                             </div>
                           </div>
-                          <div className="border-t border-grey-200/60 pt-2 flex justify-between items-baseline">
-                            <span className="text-xs font-bold text-grey-400">Bayar Sekarang:</span>
-                            <span className="text-base font-extrabold text-wellme-primary">Rp {dpAmount.toLocaleString('id-ID')}</span>
-                          </div>
-                        </div>
+                        )}
 
                         {/* Option B: Full 100% */}
                         <div
                           onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'full' }))}
                           className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
-                            formData.payment_option === 'full'
+                            effectiveOption === 'full'
                               ? 'bg-blue-50/70 border-wellme-primary shadow-md'
                               : 'bg-white border-grey-200 hover:border-grey-300'
                           }`}
@@ -1672,9 +1687,9 @@ function ApplyPageContent() {
                               </p>
                             </div>
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
-                              formData.payment_option === 'full' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
+                              effectiveOption === 'full' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
                             }`}>
-                              {formData.payment_option === 'full' && <span className="text-xs font-bold">✓</span>}
+                              {effectiveOption === 'full' && <span className="text-xs font-bold">✓</span>}
                             </div>
                           </div>
                           <div className="border-t border-grey-200/60 pt-2 flex justify-between items-baseline">
@@ -1683,9 +1698,9 @@ function ApplyPageContent() {
                           </div>
                         </div>
                       </div>
-                    );
-                  })()}
-                </div>
+                    </div>
+                  );
+                })()}
 
                 <div className="flex items-start gap-3 mt-4 border border-grey-150 p-4 rounded-2xl bg-wellme-100/10">
                   <input
