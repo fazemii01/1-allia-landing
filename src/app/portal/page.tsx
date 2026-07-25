@@ -623,51 +623,14 @@ export default function PortalOrangTua() {
                           (l: any) => l.patient_id === child.id || l.patient?.nama_lengkap === child.nama_lengkap
                         );
 
-                        const displayLogs = childLogs.length > 0 ? childLogs : [
-                          {
-                            id: 101,
-                            session_number: 1,
-                            total_sessions: 8,
-                            session_date: "2026-07-05",
-                            fokus_latihan: "Asesmen Awal, Adaptasi Ruang & Kontak Mata",
-                            progress_score: 65,
-                            aspect_scores: { atensi_fokus: 60, artikulasi_wicara: 55, regulasi_emosi: 70, kepatuhan_instruksi: 60 },
-                            catatan_terapis: "Anak cukup kooperatif saat sesi pertama, perlu penyesuaian kontak mata saat diberikan instruksi 2 tahap.",
-                            rekomendasi_ortu: "Panggil nama anak sambil memegang mainan favorit tepat di sejajar mata.",
-                            status_pencapaian: "sesuai_target"
-                          },
-                          {
-                            id: 102,
-                            session_number: 2,
-                            total_sessions: 8,
-                            session_date: "2026-07-12",
-                            fokus_latihan: "Stimulasi Artikulasi Konsonan (P, B, M) & Atensi Duduk",
-                            progress_score: 75,
-                            aspect_scores: { atensi_fokus: 75, artikulasi_wicara: 70, regulasi_emosi: 80, kepatuhan_instruksi: 70 },
-                            catatan_terapis: "Peniruan suara huruf p dan b meningkat tajam. Anak dapat duduk bertahan selama 15 menit berturut-turut.",
-                            rekomendasi_ortu: "Latihan meniup lilin/sedotan 5 menit sehari untuk penguatan otot bibir.",
-                            status_pencapaian: "sesuai_target"
-                          },
-                          {
-                            id: 103,
-                            session_number: 3,
-                            total_sessions: 8,
-                            session_date: "2026-07-19",
-                            fokus_latihan: "Penggabungan 2 Kata (Misal: 'Mau Minum', 'Buka Pintu')",
-                            progress_score: 85,
-                            aspect_scores: { atensi_fokus: 85, artikulasi_wicara: 80, regulasi_emosi: 85, kepatuhan_instruksi: 80 },
-                            catatan_terapis: "Progres luar biasa! Anak mampu berinisiatif menunjuk objek sambil merangkai 2 kata sederhana.",
-                            rekomendasi_ortu: "Berikan respon hanya jika anak mencoba mengekspresikan keinginannya dengan kata-kata.",
-                            status_pencapaian: "melampaui_target"
-                          }
-                        ];
-
-                        const latestLog = displayLogs[displayLogs.length - 1];
+                        const latestLog = childLogs.length > 0 ? childLogs[childLogs.length - 1] : null;
                         const totalSesi = latestLog?.total_sessions || 8;
-                        const completedSesi = displayLogs.length;
+                        const completedSesi = childLogs.length;
                         const percentSesi = Math.min(100, Math.round((completedSesi / totalSesi) * 100));
-                        const avgScore = Math.round(displayLogs.reduce((acc, l) => acc + (l.progress_score || 0), 0) / displayLogs.length);
-                        const aspect = latestLog?.aspect_scores || { atensi_fokus: 80, artikulasi_wicara: 75, regulasi_emosi: 85, kepatuhan_instruksi: 75 };
+                        const avgScore = childLogs.length > 0 
+                          ? Math.round(childLogs.reduce((acc, l) => acc + (l.progress_score || 0), 0) / childLogs.length)
+                          : 0;
+                        const aspect = latestLog?.aspect_scores || null;
 
                         return (
                           <div key={child.id} className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
@@ -680,10 +643,21 @@ export default function PortalOrangTua() {
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-wellme-primary border border-blue-100">
-                                  Target Paket: {totalSesi} Sesi
+                                  {childLogs.length > 0 ? `Target Paket: ${totalSesi} Sesi` : `Sesi Terapi: 0 / ${totalSesi}`}
                                 </span>
                               </div>
                             </div>
+
+                            {childLogs.length === 0 ? (
+                              <div className="bg-slate-50/70 border border-slate-200/60 rounded-2xl py-12 px-6 text-center flex flex-col items-center gap-2">
+                                <TrendingUp className="w-8 h-8 text-grey-caption opacity-40 mb-1" />
+                                <h5 className="font-extrabold text-sm text-wellme-primary">Belum Ada Catatan Perkembangan</h5>
+                                <p className="text-xs text-grey-caption font-semibold max-w-md">
+                                  Catatan rekam medis dan evaluasi perkembangan terapi untuk <span className="text-wellme-primary font-bold">{child.nama_lengkap}</span> akan diisi secara berkala oleh terapis setelah sesi terapi dilaksanakan.
+                                </p>
+                              </div>
+                            ) : (
+                              <>
 
                             {/* Stat Gauges & Overall Progress */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -818,6 +792,8 @@ export default function PortalOrangTua() {
                                 ))}
                               </div>
                             </div>
+                          </>
+                        )}
                           </div>
                         );
                       })}
