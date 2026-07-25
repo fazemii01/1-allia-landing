@@ -744,7 +744,7 @@ export default function PortalOrangTua() {
                               </h5>
 
                               <div className="flex flex-col gap-3">
-                                {displayLogs.map((log: any) => (
+                                {childLogs.map((log: any) => (
                                   <div key={log.id} className="border border-slate-200/80 rounded-2xl p-5 bg-white shadow-xs flex flex-col gap-3 relative border-l-4 border-l-wellme-primary">
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-2">
                                       <div className="flex items-center gap-2">
