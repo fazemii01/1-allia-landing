@@ -339,6 +339,7 @@ function ApplyPageContent() {
     tempat_lahir: "",
     tanggal_lahir: "",
     email_ortu: "",
+    password: "",
     no_telepon: "",
     nama_ayah: "",
     nama_ibu: "",
@@ -483,12 +484,18 @@ function ApplyPageContent() {
         !formData.tempat_lahir ||
         !formData.tanggal_lahir ||
         !formData.email_ortu ||
+        (!isReadOnlyUser && !formData.password) ||
         !formData.no_telepon ||
         !formData.nama_ayah ||
         !formData.nama_ibu ||
         !formData.alamat
       ) {
         setValidationError("Harap lengkapi semua bidang yang bertanda bintang (*)");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      if (!isReadOnlyUser && formData.password.length < 6) {
+        setValidationError("Password minimal 6 karakter untuk akun portal");
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
@@ -603,19 +610,23 @@ function ApplyPageContent() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
-        // If dashboard POST returned non-2xx, try standard NestJS fallback URL if different
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-        if (baseUrl && baseUrl !== dashboardUrl) {
-          await fetch(`${baseUrl}/api/apply`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-        }
-      }
+      const resData = await res.json().catch(() => null);
 
-      if (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true") {
+      if (typeof window !== "undefined") {
+        if (resData?.auth?.access_token) {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("token", resData.auth.access_token);
+          localStorage.setItem("parentName", resData.auth.user?.name || formData.nama_ibu || formData.nama_ayah || "Orang Tua");
+          localStorage.setItem("whatsapp", resData.auth.user?.whatsapp || formData.no_telepon);
+          localStorage.setItem("email", resData.auth.user?.email || formData.email_ortu);
+        } else if (formData.password) {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("parentName", formData.nama_ibu || formData.nama_ayah || "Orang Tua");
+          localStorage.setItem("whatsapp", formData.no_telepon);
+          localStorage.setItem("email", formData.email_ortu);
+        }
+        localStorage.setItem("childName", formData.nama_lengkap);
+        localStorage.setItem("childAge", String(formData.usia));
         localStorage.setItem("childTempatLahir", formData.tempat_lahir);
         localStorage.setItem("childTanggalLahir", formData.tanggal_lahir);
         localStorage.setItem("childJenisKelamin", formData.jenis_kelamin);
@@ -625,7 +636,13 @@ function ApplyPageContent() {
     } catch (err) {
       console.warn("Backend API not reachable. Saving to local storage fallback...", err);
 
-      if (typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true") {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("parentName", formData.nama_ibu || formData.nama_ayah || "Orang Tua");
+        localStorage.setItem("whatsapp", formData.no_telepon);
+        localStorage.setItem("email", formData.email_ortu);
+        localStorage.setItem("childName", formData.nama_lengkap);
+        localStorage.setItem("childAge", String(formData.usia));
         localStorage.setItem("childTempatLahir", formData.tempat_lahir);
         localStorage.setItem("childTanggalLahir", formData.tanggal_lahir);
         localStorage.setItem("childJenisKelamin", formData.jenis_kelamin);
@@ -842,6 +859,26 @@ function ApplyPageContent() {
                     />
                   </div>
                 </div>
+
+                {!isReadOnlyUser && (
+                  <div className="flex flex-col gap-1.5 bg-[#EBF3FC]/50 p-4 rounded-2xl border border-wellme-primary/20">
+                    <label className="text-xs font-bold text-wellme-primary uppercase tracking-wide">
+                      Password Akun Portal <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      required
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      placeholder="Buat password untuk login ke Portal Orang Tua"
+                      className="border border-grey-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-wellme-primary text-grey-500 font-semibold bg-white"
+                    />
+                    <p className="text-[11px] text-grey-500 font-medium leading-relaxed">
+                      💡 Password ini digunakan agar Anda bisa langsung masuk ke Portal Orang Tua & memantau status tagihan pendaftaran.
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
