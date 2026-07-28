@@ -391,7 +391,7 @@ function ApplyPageContent() {
     detail_ketakutan: "",
     // Step 5
     declarationAccepted: false,
-    payment_option: "dp_50", // dp_50 | full
+    payment_option: "full", // full | dp_50
   });
 
   const [dbLayanan, setDbLayanan] = useState<LayananItem[]>(STATIC_LAYANAN);
@@ -1647,8 +1647,8 @@ function ApplyPageContent() {
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">
-                                  Rekomendasi
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-grey-100 text-grey-500 uppercase tracking-wider block w-fit mb-1">
+                                  Opsi Cicil 50%
                                 </span>
                                 <h5 className="font-extrabold text-sm text-wellme-primary">Bayar DP 50%</h5>
                                 <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
@@ -1679,8 +1679,8 @@ function ApplyPageContent() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-grey-100 text-grey-500 uppercase tracking-wider block w-fit mb-1">
-                                Pelunasan Langsung
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">
+                                Rekomendasi (Lunas)
                               </span>
                               <h5 className="font-extrabold text-sm text-wellme-primary">Bayar Lunas 100%</h5>
                               <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
