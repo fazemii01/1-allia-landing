@@ -592,11 +592,11 @@ function ApplyPageContent() {
       const numericPrice = parseInt(rawPriceStr.replace(/[^0-9]/g, "")) || 0;
 
       // Determine clean jenis_terapi string for backend
-      const normalizedJenisTerapi = isWicaraService(formData.jenis_terapi) ? "terapi_wicara" : "hipoterapi";
+      const jenisTerapiLabel = titleLayanan || (isWicaraService(formData.jenis_terapi) ? "Terapi Wicara & Perilaku" : "Terapi Khusus");
 
       const payload = {
         ...formData,
-        jenis_terapi: normalizedJenisTerapi,
+        jenis_terapi: jenisTerapiLabel,
         program_detail: `${titleLayanan}: ${formData.program || titleLayanan}`,
         total_price: numericPrice > 0 ? numericPrice : undefined,
       };
@@ -663,7 +663,8 @@ function ApplyPageContent() {
         id: Date.now(),
         submittedAt: new Date().toISOString(),
         ...formData,
-        jenis_terapi: `${titleLayanan}: ${formData.program || titleLayanan}`
+        jenis_terapi: titleLayanan || formData.jenis_terapi,
+        program_detail: `${titleLayanan}: ${formData.program || titleLayanan}`
       });
       localStorage.setItem("pending_applies", JSON.stringify(pendingSubmissions));
 

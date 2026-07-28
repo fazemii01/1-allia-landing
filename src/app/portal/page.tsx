@@ -667,7 +667,7 @@ export default function PortalOrangTua() {
                                       : "bg-slate-100 text-grey-450 hover:bg-slate-200 hover:text-wellme-primary"
                                   }`}
                                 >
-                                  {prog.replace(/_/g, ' ')} {count > 0 && `(${count})`}
+                                  {prog === "terapi_wicara" ? "Terapi Wicara" : prog === "hipoterapi" ? "Hipoterapi" : prog.replace(/_/g, ' ')} {count > 0 && `(${count})`}
                                 </button>
                               );
                             })}
@@ -729,7 +729,7 @@ export default function PortalOrangTua() {
                               </div>
                               <div>
                                 <span className="font-semibold text-slate-500 block">Program Terapi:</span>
-                                <span className="font-extrabold text-slate-900 text-sm capitalize">{child.jenis_terapi?.replace(/_/g, ' ')}</span>
+                                <span className="font-extrabold text-slate-900 text-sm">{child.jenis_terapi === "terapi_wicara" ? "Terapi Wicara" : child.jenis_terapi === "hipoterapi" ? "Hipoterapi" : child.jenis_terapi || "-"}</span>
                               </div>
                               <div>
                                 <span className="font-semibold text-slate-500 block">Orang Tua / Wali:</span>
@@ -746,7 +746,7 @@ export default function PortalOrangTua() {
                               <div>
                                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-wellme-secondary">Kartu Perkembangan Anak</span>
                                 <h4 className="font-extrabold text-xl text-wellme-primary">{child.nama_lengkap}</h4>
-                                <p className="text-xs text-grey-caption font-semibold mt-0.5">Program: <span className="text-wellme-primary font-bold">{child.jenis_terapi}</span></p>
+                                <p className="text-xs text-grey-caption font-semibold mt-0.5">Program: <span className="text-wellme-primary font-bold">{child.jenis_terapi === "terapi_wicara" ? "Terapi Wicara" : child.jenis_terapi === "hipoterapi" ? "Hipoterapi" : child.jenis_terapi || "-"}</span></p>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-wellme-primary border border-blue-100">
