@@ -391,7 +391,8 @@ function ApplyPageContent() {
     detail_ketakutan: "",
     // Step 5
     declarationAccepted: false,
-    payment_option: "full", // full | dp_50
+    payment_option: "full", // full | dp_50 | custom
+    custom_payment_amount: "", // only used when payment_option === 'custom'
   });
 
   const [dbLayanan, setDbLayanan] = useState<LayananItem[]>(STATIC_LAYANAN);
@@ -573,6 +574,34 @@ function ApplyPageContent() {
       return;
     }
 
+    // Validate custom payment amount
+    if (formData.payment_option === 'custom') {
+      const selectedLayananForValidation = dbLayanan.find(
+        (l) =>
+          l.slug === formData.jenis_terapi ||
+          l.id.toString() === formData.jenis_terapi ||
+          (l.slug === "terapi-wicara" && formData.jenis_terapi === "terapi_wicara") ||
+          (l.slug === "hipnoterapi-anak" && formData.jenis_terapi === "hipoterapi")
+      );
+      const selectedProgramForValidation = selectedLayananForValidation?.programs?.find(
+        (p) => p.title === formData.program || p.title.includes(formData.program)
+      );
+      const priceStrForValidation = selectedProgramForValidation?.harga || selectedLayananForValidation?.stats?.mulai_dari || "";
+      const totalForValidation = parseInt(priceStrForValidation.replace(/[^0-9]/g, "")) || 0;
+      const customAmt = parseInt(formData.custom_payment_amount.replace(/[^0-9]/g, "")) || 0;
+
+      if (customAmt <= 0) {
+        setValidationError("Harap masukkan nominal pembayaran pertama yang valid (lebih dari Rp 0).");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      if (totalForValidation > 0 && customAmt > totalForValidation) {
+        setValidationError(`Nominal tidak boleh melebihi total harga program (Rp ${totalForValidation.toLocaleString('id-ID')}).`);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -599,6 +628,10 @@ function ApplyPageContent() {
         jenis_terapi: jenisTerapiLabel,
         program_detail: `${titleLayanan}: ${formData.program || titleLayanan}`,
         total_price: numericPrice > 0 ? numericPrice : undefined,
+        custom_payment_amount:
+          formData.payment_option === 'custom'
+            ? (parseInt(formData.custom_payment_amount.replace(/[^0-9]/g, "")) || 0)
+            : undefined,
       };
       
       const res = await fetch(`${dashboardUrl}/api/apply`, {
@@ -1595,7 +1628,7 @@ function ApplyPageContent() {
                   </div>
                 </div>
 
-                {/* Skema & Opsi Pembayaran (DP 50% vs Lunas) */}
+                {/* Skema & Opsi Pembayaran */}
                 {(() => {
                   const selLay = dbLayanan.find(
                     (l) => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi
@@ -1610,7 +1643,12 @@ function ApplyPageContent() {
                   const fullAmount = parsed > 0 ? parsed : (isHipo ? 550000 : 150000);
                   const dpAmount = Math.round(fullAmount * 0.5);
 
-                  const effectiveOption = isDpAllowed ? formData.payment_option : 'full';
+                  // For DP 50%, if not allowed fall back to full; custom is always available
+                  const effectiveOption = (!isDpAllowed && formData.payment_option === 'dp_50') ? 'full' : formData.payment_option;
+
+                  // Custom amount parsing
+                  const rawCustom = parseInt(formData.custom_payment_amount.replace(/[^0-9]/g, "")) || 0;
+                  const remainingCustom = fullAmount - rawCustom;
 
                   return (
                     <div className="flex flex-col gap-3 pt-2">
@@ -1619,7 +1657,7 @@ function ApplyPageContent() {
                           <span>💳 Skema Pembayaran Sesi Terapi</span>
                           {isDpAllowed ? (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">
-                              Opsi DP 50% Tersedia
+                              Opsi DP Tersedia
                             </span>
                           ) : (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">
@@ -1628,13 +1666,11 @@ function ApplyPageContent() {
                           )}
                         </h4>
                         <p className="text-xs text-grey-400 font-medium">
-                          {isDpAllowed
-                            ? "Pilih metode pembayaran yang paling nyaman untuk keluarga Anda"
-                            : "Layanan ini mensyaratkan pelunasan lunas 100% di awal pendaftaran."}
+                          Pilih metode pembayaran yang paling nyaman untuk keluarga Anda
                         </p>
                       </div>
 
-                      <div className={`grid grid-cols-1 ${isDpAllowed ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-3`}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {/* Option A: DP 50% (Only displayed when allow_dp is true) */}
                         {isDpAllowed && (
                           <div
@@ -1696,6 +1732,87 @@ function ApplyPageContent() {
                           <div className="border-t border-grey-200/60 pt-2 flex justify-between items-baseline">
                             <span className="text-xs font-bold text-grey-400">Total Lunas:</span>
                             <span className="text-base font-extrabold text-wellme-primary">Rp {fullAmount.toLocaleString('id-ID')}</span>
+                          </div>
+                        </div>
+
+                        {/* Option C: Custom Amount — always shown */}
+                        <div
+                          onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'custom' }))}
+                          className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col gap-3 relative overflow-hidden select-none sm:col-span-2 ${
+                            effectiveOption === 'custom'
+                              ? 'bg-amber-50/60 border-amber-400 shadow-md'
+                              : 'bg-white border-grey-200 hover:border-grey-300'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider block w-fit mb-1">
+                                Bayar Sendiri
+                              </span>
+                              <h5 className="font-extrabold text-sm text-wellme-primary">Nominal Sendiri</h5>
+                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
+                                Masukkan jumlah yang ingin Anda bayar terlebih dahulu.
+                              </p>
+                            </div>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
+                              effectiveOption === 'custom' ? 'border-amber-500 bg-amber-500 text-white' : 'border-grey-300'
+                            }`}>
+                              {effectiveOption === 'custom' && <span className="text-xs font-bold">✓</span>}
+                            </div>
+                          </div>
+
+                          {/* Input — only interactive when selected */}
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="border-t border-grey-200/60 pt-3 flex flex-col gap-2"
+                          >
+                            <label className="text-[10px] font-bold text-grey-400 uppercase tracking-wide">
+                              Jumlah Pembayaran Pertama <span className="text-red-500">*</span>
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-grey-400 pointer-events-none">Rp</span>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                placeholder="0"
+                                value={formData.custom_payment_amount}
+                                disabled={effectiveOption !== 'custom'}
+                                onChange={(e) => {
+                                  // Only allow digits
+                                  const digits = e.target.value.replace(/[^0-9]/g, "");
+                                  // Format with thousand separator
+                                  const formatted = digits ? parseInt(digits, 10).toLocaleString('id-ID') : "";
+                                  setFormData((prev) => ({ ...prev, custom_payment_amount: formatted }));
+                                }}
+                                onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'custom' }))}
+                                className={`w-full pl-10 pr-4 py-3 border rounded-xl text-sm font-bold focus:outline-none transition-all ${
+                                  effectiveOption === 'custom'
+                                    ? 'border-amber-400 focus:border-amber-500 text-wellme-primary bg-white'
+                                    : 'border-grey-150 text-grey-300 bg-slate-50 cursor-not-allowed'
+                                }`}
+                              />
+                            </div>
+
+                            {/* Live remaining balance hint */}
+                            {effectiveOption === 'custom' && rawCustom > 0 && rawCustom <= fullAmount && (
+                              <p className="text-[11px] font-semibold text-grey-400">
+                                Sisa{" "}
+                                <span className="font-extrabold text-wellme-primary">
+                                  Rp {remainingCustom.toLocaleString('id-ID')}
+                                </span>{" "}
+                                akan dibayarkan nanti.
+                              </p>
+                            )}
+                            {effectiveOption === 'custom' && rawCustom > fullAmount && (
+                              <p className="text-[11px] font-bold text-red-500">
+                                ⚠️ Nominal melebihi total harga (Rp {fullAmount.toLocaleString('id-ID')})
+                              </p>
+                            )}
+                            {effectiveOption === 'custom' && rawCustom === fullAmount && rawCustom > 0 && (
+                              <p className="text-[11px] font-semibold text-green-600">
+                                ✓ Sama dengan pelunasan penuh.
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
