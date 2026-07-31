@@ -35,28 +35,7 @@ import {
   Filter
 } from "lucide-react";
 
-const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [
-  {
-    id: 1,
-    bank_name: "BANK BCA",
-    account_number: "8690123456",
-    account_name: "Klinik Allia Kids",
-    instructions: "Transfer sesuai nominal total tagihan",
-    icon_url: null,
-    is_active: true,
-    sort_order: 1
-  },
-  {
-    id: 2,
-    bank_name: "BANK MANDIRI",
-    account_number: "1370012345678",
-    account_name: "Klinik Allia Kids",
-    instructions: "Transfer sesuai nominal total tagihan",
-    icon_url: null,
-    is_active: true,
-    sort_order: 2
-  }
-];
+const DEFAULT_PAYMENT_METHODS: PaymentMethodItem[] = [];
 
 export default function PortalOrangTua() {
   const router = useRouter();
@@ -938,8 +917,20 @@ export default function PortalOrangTua() {
                         <div key={inv.id} className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
                           {/* Invoice Summary Header */}
                           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-3">
-                            <div className="flex flex-col">
-                              <span className="text-xs font-bold text-wellme-secondary">{inv.invoice_number}</span>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-wellme-secondary">{inv.invoice_number}</span>
+                                {/* Installment number badge */}
+                                {(inv as any).installment_no && (inv as any).installment_no >= 1 && (
+                                  <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${
+                                    (inv as any).installment_no === 1
+                                      ? "bg-blue-50 text-blue-700 border-blue-200"
+                                      : "bg-purple-50 text-purple-700 border-purple-200"
+                                  }`}>
+                                    Cicilan {(inv as any).installment_no}/2
+                                  </span>
+                                )}
+                              </div>
                               <h4 className="font-extrabold text-base text-wellme-primary">Pasien: {inv.patient?.nama_lengkap || "-"}</h4>
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -1014,13 +1005,31 @@ export default function PortalOrangTua() {
 
                           {/* Price Breakdown & Payment Method Section */}
                           {(() => {
-                            const fullPrice = Number((inv as any).full_amount) || ((inv as any).payment_type === 'dp' || (inv as any).dp_percentage === 50 ? Number(inv.total_amount) * 2 : Number(inv.total_amount));
-                            const isDp = (inv as any).payment_type === 'dp' || (inv as any).dp_percentage === 50;
-                            const sisaPelunasan = isDp ? fullPrice - Number(inv.total_amount) : 0;
+                            const isCustomPayment = (inv as any).payment_type === 'custom';
+                            const isDp = (inv as any).payment_type === 'dp';
+                            const isInstallment = isDp || isCustomPayment;
+                            const dpPercent = Number((inv as any).dp_percentage) || (isDp ? 50 : 0);
+                            const fullPrice = Number((inv as any).full_amount) || (isInstallment ? Number(inv.total_amount) * 2 : Number(inv.total_amount));
+                            const paidAmount = Number(inv.total_amount);
+                            const sisaPelunasan = isInstallment ? Math.max(0, fullPrice - paidAmount) : 0;
+                            const isEffectivelyFull = isCustomPayment && sisaPelunasan <= 0;
                             const method = paymentMethodMap[inv.id] || 'transfer';
 
                             return (
                               <div className="flex flex-col gap-4">
+                                {/* 100% Custom Payment Notification */}
+                                {isEffectivelyFull && (
+                                  <div className="bg-green-50 border border-green-200 rounded-xl p-3.5 flex items-start gap-3">
+                                    <span className="text-lg leading-none mt-0.5">✅</span>
+                                    <div className="flex flex-col gap-0.5">
+                                      <span className="text-xs font-extrabold text-green-800">Nominal Setara Pelunasan Penuh</span>
+                                      <p className="text-xs text-green-700 font-semibold leading-relaxed">
+                                        Nominal yang Anda bayarkan setara dengan pembayaran penuh (100%). Tidak ada sisa tagihan — terima kasih!
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+
                                 {/* Price Breakdown Card */}
                                 <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col gap-2">
                                   <div className="flex justify-between items-center text-xs">
@@ -1030,17 +1039,21 @@ export default function PortalOrangTua() {
                                   <div className="flex justify-between items-center text-xs">
                                     <span className="font-semibold text-wellme-primary">Skema Tagihan:</span>
                                     <span className="font-extrabold text-wellme-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
-                                      {isDp ? "DP 50%" : "Lunas 100%"}
+                                      {isEffectivelyFull
+                                        ? "Lunas 100%"
+                                        : isInstallment
+                                        ? `Cicilan ${dpPercent}%`
+                                        : "Lunas 100%"}
                                     </span>
                                   </div>
                                   <div className="flex justify-between items-center text-sm font-extrabold text-wellme-primary pt-1 border-t border-slate-200/60">
-                                    <span>Jumlah Tagihan Ini ({isDp ? 'DP 50%' : '100%'}):</span>
-                                    <span className="text-base text-wellme-secondary font-mono">{formatCurrency(inv.total_amount)}</span>
+                                    <span>Jumlah Tagihan Ini ({isEffectivelyFull ? '100%' : isInstallment ? `${dpPercent}%` : '100%'}):</span>
+                                    <span className="text-base text-wellme-secondary font-mono">{formatCurrency(paidAmount)}</span>
                                   </div>
-                                  {isDp && sisaPelunasan > 0 && (
+                                  {isInstallment && !isEffectivelyFull && sisaPelunasan > 0 && (
                                     <div className="flex justify-between items-center text-xs text-orange-700 bg-orange-50/80 p-2 rounded-lg border border-orange-100">
-                                      <span>Sisa Pelunasan Sesi Terapi:</span>
-                                      <span className="font-bold">{formatCurrency(sisaPelunasan)} (Dibayar saat sesi terapi)</span>
+                                      <span>Sisa Cicilan Ke-2:</span>
+                                      <span className="font-bold">{formatCurrency(sisaPelunasan)} (Dibayar saat sesi berikutnya)</span>
                                     </div>
                                   )}
                                 </div>
@@ -1141,7 +1154,7 @@ export default function PortalOrangTua() {
                             {inv.status !== 'sudah_bayar' && inv.status !== 'menunggu_verifikasi' && (
                               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
                                 <a
-                                  href={`https://wa.me/6281234567890?text=Halo%20Admin%20Allia%20Kids,%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20Invoice%20${inv.invoice_number}%20sebesar%20${formatCurrency(inv.total_amount)}`}
+                                  href={`https://wa.me/${(process.env.NEXT_PUBLIC_ADMIN_WA || '6285138511348').replace(/[^0-9]/g, '')}?text=Halo%20Admin%20Allia%20Kids,%20saya%20ingin%20konfirmasi%20pembayaran%20untuk%20Invoice%20${inv.invoice_number}%20sebesar%20${formatCurrency(inv.total_amount)}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="rounded-xl border border-wellme-primary/20 hover:border-wellme-primary text-wellme-primary font-bold px-4 py-2.5 text-xs transition-all text-center flex items-center justify-center cursor-pointer"

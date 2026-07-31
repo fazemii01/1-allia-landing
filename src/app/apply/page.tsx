@@ -6,95 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { layananApi, LayananItem } from "@/lib/api";
 
-const STATIC_LAYANAN: LayananItem[] = [
-  {
-    id: 1,
-    slug: "hipnoterapi-anak",
-    title: "Hipnoterapi Anak & Dewasa",
-    description: "Pendekatan hipnosleep/relaksasi emosi untuk mengatasi tantrum berlebih, fobia makanan (takut nasi), atau trauma.",
-    image_url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600",
-    stats: { durasi_sesi: "90 Menit", format_layanan: "Tatap Muka", mulai_dari: "Rp 550.000" },
-    mengapa_memilih: [],
-    isu_permasalahan: [],
-    programs: [
-      { title: "Terapi Emosi & Perilaku", desc: "Membantu anak mengelola emosi negatif seperti marah, sedih, takut, atau trauma secara aman.", harga: "Rp 550.000 / Sesi" },
-      { title: "Terapi Konsentrasi & Fokus Belajar", desc: "Meningkatkan kemampuan anak dalam berkonsentrasi, menghafal, dan menyerap pelajaran sekolah.", harga: "Rp 550.000 / Sesi" },
-      { title: "Terapi Percaya Diri & Sosialisasi", desc: "Membantu anak mengatasi rasa malu, minder, rendah diri, atau takut bersosialisasi.", harga: "Rp 550.000 / Sesi" },
-      { title: "Terapi Gangguan Tidur & Mimpi Buruk", desc: "Mengatasi masalah susah tidur, sering terbangun di malam hari, ketakutan tidur sendiri.", harga: "Rp 550.000 / Sesi" },
-      { title: "Terapi Pengendalian Kebiasaan Buruk", desc: "Membantu anak menghentikan kebiasaan seperti menggigit kuku, ngompol, mengisap jempol.", harga: "Rp 550.000 / Sesi" },
-      { title: "Terapi Kecemasan & Fobia", desc: "Mengatasi ketakutan berlebih terhadap sekolah, dokter, kegelapan, hewan, atau situasi sosial.", harga: "Rp 550.000 / Sesi" },
-    ],
-    is_active: true,
-    sort_order: 1,
-  },
-  {
-    id: 2,
-    slug: "terapi-wicara",
-    title: "Layanan Terapi Wicara",
-    description: "Dirancang untuk mengatasi hambatan bicara, kosa kata terbatas, artikulasi, dan gangguan bahasa (Speech Delay).",
-    image_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600",
-    stats: { durasi_sesi: "60 Menit", format_layanan: "Offline & Online", mulai_dari: "Rp 150.000" },
-    mengapa_memilih: [],
-    isu_permasalahan: [],
-    programs: [
-      { title: "Terapi Wicara Umum", desc: "Evaluasi dan stimulasi kosa kata & komunikasi verbal anak.", harga: "Rp 150.000 / Sesi" },
-      { title: "Artikulasi & Kejelasan Bicara (Cadel)", desc: "Melatih kejelasan pengucapan konsonan dan vokal.", harga: "Rp 150.000 / Sesi" },
-      { title: "Mengatasi Gagap / Stuttering", desc: "Melatih kelancaran ritme bicar dan pernapasan.", harga: "Rp 150.000 / Sesi" },
-      { title: "Hambatan Motorik Mulut (Oro-motor)", desc: "Latihan kekuatan otot bibir, lidah, dan rahang.", harga: "Rp 150.000 / Sesi" },
-    ],
-    is_active: true,
-    sort_order: 2,
-  },
-  {
-    id: 3,
-    slug: "terapi-perilaku",
-    title: "Terapi Perilaku",
-    description: "Pendampingan khusus untuk stimulasi fokus, interaksi sosial, regulasi emosi, dan penanganan anak ADHD/Autisme.",
-    image_url: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?q=80&w=600",
-    stats: { durasi_sesi: "60 Menit", format_layanan: "Offline", mulai_dari: "Rp 200.000" },
-    mengapa_memilih: [],
-    isu_permasalahan: [],
-    programs: [
-      { title: "Terapi Perilaku & Sensori", desc: "Modifikasi perilaku hiperaktif dan ketaatan instruksi.", harga: "Rp 200.000 / Sesi" },
-      { title: "Bimbingan Fokus & Atensi", desc: "Melatih daya tahan konsentrasi dan keheningan duduk.", harga: "Rp 200.000 / Sesi" },
-    ],
-    is_active: true,
-    sort_order: 3,
-  },
-  {
-    id: 4,
-    slug: "tumbuh-kembang",
-    title: "Skrining Tumbuh Kembang",
-    description: "Pemeriksaan komprehensif oleh tim praktisi untuk mendeteksi dini milestone perkembangan fisik, bahasa, dan kognitif.",
-    image_url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600",
-    stats: { durasi_sesi: "45 Menit", format_layanan: "Offline", mulai_dari: "Rp 250.000" },
-    mengapa_memilih: [],
-    isu_permasalahan: [],
-    programs: [
-      { title: "Skrining Tumbuh Kembang Lengkap", desc: "Evaluasi motorik, wicara, emosi, dan sosial anak.", harga: "Rp 250.000 / Sesi" },
-    ],
-    is_active: true,
-    sort_order: 4,
-  },
-  {
-    id: 5,
-    slug: "terapi-wicara-perilaku",
-    title: "Terapi Wicara & Perilaku",
-    description: "Pendampingan komprehensif stimulasi artikulasi bicara, penanganan speech delay (keterlambatan bicara), dan pembiasaan modifikasi perilaku fokus anak.",
-    image_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600",
-    stats: { durasi_sesi: "60 Menit", format_layanan: "Tatap Muka", mulai_dari: "Rp 1.750.000" },
-    mengapa_memilih: [],
-    isu_permasalahan: [],
-    programs: [
-      { title: "Paket Terapi Perilaku 8 Sesi + Terapi Wicara", desc: "Pendampingan lengkap 8 sesi terapi perilaku + stimulasi wicara.", harga: "Rp 3.500.000" },
-      { title: "Paket Terapi Perilaku 4 Sesi + Terapi Wicara", desc: "Paket intensif 4 sesi terapi perilaku dan stimulasi wicara.", harga: "Rp 2.750.000" },
-      { title: "Terapi Wicara", desc: "Stimulasi artikulasi bicara dan penanganan keterlambatan bicara.", harga: "Rp 1.750.000" },
-      { title: "Terapi Perilaku", desc: "Modifikasi perilaku, stimulasi atensi, dan regulasi emosi anak.", harga: "Rp 1.750.000" },
-    ],
-    is_active: true,
-    sort_order: 5,
-  },
-];
+
 
 // Custom scrollable dropdown to limit height to 6 items and match premium aesthetics
 const CustomDropdown = ({
@@ -393,19 +305,23 @@ function ApplyPageContent() {
     declarationAccepted: false,
     payment_option: "full", // full | dp_50 | custom
     custom_payment_amount: "", // only used when payment_option === 'custom'
+    persetujuan_dokumentasi: "setuju_dengan_sensor", // 'setuju_tanpa_pengecualian' | 'setuju_dengan_sensor' | 'tidak_setuju'
+    persetujuan_syarat_ketentuan: false,
+    penandatangan_kota: "Lumajang",
+    penandatangan_tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
   });
 
-  const [dbLayanan, setDbLayanan] = useState<LayananItem[]>(STATIC_LAYANAN);
+  const [dbLayanan, setDbLayanan] = useState<LayananItem[]>([]);
 
   useEffect(() => {
     async function loadLayanan() {
       try {
         const list = await layananApi.getAll();
-        if (list && list.length > 0) {
+        if (list && Array.isArray(list)) {
           setDbLayanan(list);
         }
       } catch (err) {
-        console.warn("Gagal memuat layanan dari backend, menggunakan data fallback.", err);
+        console.warn("Gagal memuat layanan dari backend API.", err);
       }
     }
     loadLayanan();
@@ -568,8 +484,8 @@ function ApplyPageContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError("");
-    if (!formData.declarationAccepted) {
-      setValidationError("Harap setujui pernyataan konfirmasi data.");
+    if (!formData.persetujuan_syarat_ketentuan && !formData.declarationAccepted) {
+      setValidationError("Harap centang persetujuan syarat dan ketentuan (poin 11 - 13) sebelum melanjutkan.");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -1628,7 +1544,104 @@ function ApplyPageContent() {
                   </div>
                 </div>
 
-                {/* Skema & Opsi Pembayaran */}
+                {/* 1. Syarat & Ketentuan Persetujuan Klien (Poin 11 - 13) */}
+                <div className="flex flex-col gap-4 border-2 border-slate-200 rounded-3xl p-5 sm:p-6 bg-slate-50/70 shadow-sm border-t">
+                  <div className="flex items-center gap-2.5 border-b border-slate-200 pb-3">
+                    <span className="text-xl">📜</span>
+                    <div>
+                      <h4 className="font-extrabold text-sm text-wellme-primary">Syarat & Ketentuan Persetujuan Layanan</h4>
+                      <p className="text-[11px] text-grey-400 font-medium">Mohon dibaca dan disetujui poin persetujuan layanan di bawah ini</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 bg-white p-4 rounded-2xl border border-slate-200/80">
+                    <span className="text-xs font-black text-wellme-primary">Kesadaran & Penyelesaian Perselisihan</span>
+                    <p className="text-xs text-grey-500 font-medium leading-relaxed">
+                      Klien secara sehat dan sadar datang kepada <strong>Allia Kids</strong> tanpa paksaan dari pihak manapun, sehingga apabila terjadi perselisihan di kemudian hari, maka akan diselesaikan secara kekeluargaan melalui musyawarah atau jika terkait dengan hukum maka penyelesaian perselisihan dilakukan di Pengadilan Negeri Surabaya menurut KUHP (Kitab Undang-undang Hukum Perdata).
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-3 bg-white p-4 rounded-2xl border border-slate-200/80">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-black text-wellme-primary">Persetujuan Pengambilan Dokumentasi</span>
+                      <p className="text-xs text-grey-500 font-medium leading-relaxed">
+                        Persetujuan klien mengenai pengambilan dokumentasi berupa gambar, video, dan suara selama proses terapi berlangsung dengan tujuan testimoni, dokumentasi, dan tujuan promosional.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 pt-1">
+                      {[
+                        { key: "setuju_tanpa_pengecualian", label: "Saya menyetujui untuk dilakukan pengambilan dokumentasi tanpa pengecualian" },
+                        { key: "setuju_dengan_sensor", label: "Saya menyetujui untuk dilakukan pengambilan dokumentasi dengan sensor pada bagian wajah" },
+                        { key: "tidak_setuju", label: "Saya tidak menyetujui untuk dilakukan pengambilan dokumentasi dalam bentuk apapun" },
+                      ].map((option) => (
+                        <label
+                          key={option.key}
+                          className={`flex items-start gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer select-none ${
+                            formData.persetujuan_dokumentasi === option.key ? "border-wellme-primary bg-blue-50/50 font-bold text-wellme-primary" : "border-slate-150 bg-slate-50/50 hover:border-slate-300 text-grey-500 font-medium"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="persetujuan_dokumentasi"
+                            value={option.key}
+                            checked={formData.persetujuan_dokumentasi === option.key}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, persetujuan_dokumentasi: e.target.value }))}
+                            className="w-4 h-4 accent-wellme-primary mt-0.5 shrink-0 cursor-pointer"
+                          />
+                          <span className="text-xs leading-snug">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 bg-white p-4 rounded-2xl border border-slate-200/80">
+                    <span className="text-xs font-black text-wellme-primary">Kebijakan Pembayaran & Pembatalan</span>
+                    <p className="text-xs text-grey-500 font-medium leading-relaxed">
+                      Biaya terapi yang sudah dibayarkan <strong>tidak dapat dikembalikan</strong>, termasuk jika klien memutuskan untuk tidak melanjutkan sesi terapi ketika kontrak sesi terapi masih berjalan.
+                    </p>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-4 rounded-2xl border-2 border-wellme-primary/40 bg-wellme-primary/5">
+                    <input
+                      type="checkbox"
+                      id="persetujuan_syarat_ketentuan"
+                      checked={formData.persetujuan_syarat_ketentuan}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, persetujuan_syarat_ketentuan: e.target.checked, declarationAccepted: e.target.checked }))}
+                      className="w-5 h-5 accent-wellme-primary mt-0.5 shrink-0 cursor-pointer"
+                    />
+                    <label htmlFor="persetujuan_syarat_ketentuan" className="text-xs text-grey-600 font-bold leading-relaxed cursor-pointer select-none">
+                      Saya telah membaca, memahami, dan menyetujui seluruh poin-poin di atas secara sadar dan tanpa paksaan. <span className="text-red-500">*</span>
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold text-grey-400 uppercase tracking-wide">Ditandatangani / Disetujui Di</label>
+                      <input
+                        type="text"
+                        name="penandatangan_kota"
+                        value={formData.penandatangan_kota}
+                        onChange={handleInputChange}
+                        placeholder="Contoh: Lumajang / Surabaya"
+                        className="border border-grey-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-grey-500 focus:outline-none focus:border-wellme-primary bg-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-bold text-grey-400 uppercase tracking-wide">Pada Tanggal</label>
+                      <input
+                        type="text"
+                        name="penandatangan_tanggal"
+                        value={formData.penandatangan_tanggal}
+                        onChange={handleInputChange}
+                        className="border border-grey-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-grey-500 focus:outline-none focus:border-wellme-primary bg-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Skema & Opsi Pembayaran */}
                 {(() => {
                   const selLay = dbLayanan.find(
                     (l) => l.slug === formData.jenis_terapi || l.id.toString() === formData.jenis_terapi
@@ -1642,58 +1655,38 @@ function ApplyPageContent() {
                   const isHipo = (formData.jenis_terapi || '').toLowerCase().includes('hipno') || (formData.jenis_terapi || '').toLowerCase().includes('hipot');
                   const fullAmount = parsed > 0 ? parsed : (isHipo ? 550000 : 150000);
                   const dpAmount = Math.round(fullAmount * 0.5);
-
-                  // For DP 50%, if not allowed fall back to full; custom is always available
                   const effectiveOption = (!isDpAllowed && formData.payment_option === 'dp_50') ? 'full' : formData.payment_option;
-
-                  // Custom amount parsing
                   const rawCustom = parseInt(formData.custom_payment_amount.replace(/[^0-9]/g, "")) || 0;
                   const remainingCustom = fullAmount - rawCustom;
 
                   return (
-                    <div className="flex flex-col gap-3 pt-2">
+                    <div className="flex flex-col gap-3 pt-2 border-t border-slate-200 mt-2">
                       <div className="flex flex-col">
                         <h4 className="text-sm font-extrabold text-wellme-primary flex items-center gap-2">
                           <span>💳 Skema Pembayaran Sesi Terapi</span>
                           {isDpAllowed ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">
-                              Opsi DP Tersedia
-                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-700">Opsi DP Tersedia</span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">
-                              Pelunasan 100% (Tanpa DP)
-                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700">Pelunasan 100% (Tanpa DP)</span>
                           )}
                         </h4>
-                        <p className="text-xs text-grey-400 font-medium">
-                          Pilih metode pembayaran yang paling nyaman untuk keluarga Anda
-                        </p>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Option A: DP 50% (Only displayed when allow_dp is true) */}
                         {isDpAllowed && (
                           <div
                             onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'dp_50' }))}
                             className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
-                              effectiveOption === 'dp_50'
-                                ? 'bg-blue-50/70 border-wellme-primary shadow-md'
-                                : 'bg-white border-grey-200 hover:border-grey-300'
+                              effectiveOption === 'dp_50' ? 'bg-blue-50/70 border-wellme-primary shadow-md' : 'bg-white border-grey-200 hover:border-grey-300'
                             }`}
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-grey-100 text-grey-500 uppercase tracking-wider block w-fit mb-1">
-                                  Opsi Cicil 50%
-                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-grey-100 text-grey-500 uppercase tracking-wider block w-fit mb-1">Opsi Cicil 50%</span>
                                 <h5 className="font-extrabold text-sm text-wellme-primary">Bayar DP 50%</h5>
-                                <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
-                                  Bayar 50% sekarang, sisa 50% dilunasi saat sesi pertama.
-                                </p>
+                                <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">Bayar 50% sekarang, sisa 50% dilunasi saat sesi pertama.</p>
                               </div>
-                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
-                                effectiveOption === 'dp_50' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
-                              }`}>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${effectiveOption === 'dp_50' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'}`}>
                                 {effectiveOption === 'dp_50' && <span className="text-xs font-bold">✓</span>}
                               </div>
                             </div>
@@ -1704,28 +1697,19 @@ function ApplyPageContent() {
                           </div>
                         )}
 
-                        {/* Option B: Full 100% */}
                         <div
                           onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'full' }))}
                           className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
-                            effectiveOption === 'full'
-                              ? 'bg-blue-50/70 border-wellme-primary shadow-md'
-                              : 'bg-white border-grey-200 hover:border-grey-300'
+                            effectiveOption === 'full' ? 'bg-blue-50/70 border-wellme-primary shadow-md' : 'bg-white border-grey-200 hover:border-grey-300'
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">
-                                Rekomendasi (Lunas)
-                              </span>
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-wellme-secondary text-white uppercase tracking-wider block w-fit mb-1">Rekomendasi (Lunas)</span>
                               <h5 className="font-extrabold text-sm text-wellme-primary">Bayar Lunas 100%</h5>
-                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
-                                Pelunasan penuh di awal pendaftaran.
-                              </p>
+                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">Pelunasan penuh di awal pendaftaran.</p>
                             </div>
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
-                              effectiveOption === 'full' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'
-                            }`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${effectiveOption === 'full' ? 'border-wellme-primary bg-wellme-primary text-white' : 'border-grey-300'}`}>
                               {effectiveOption === 'full' && <span className="text-xs font-bold">✓</span>}
                             </div>
                           </div>
@@ -1735,40 +1719,25 @@ function ApplyPageContent() {
                           </div>
                         </div>
 
-                        {/* Option C: Custom Amount — always shown */}
                         <div
                           onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'custom' }))}
                           className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col gap-3 relative overflow-hidden select-none sm:col-span-2 ${
-                            effectiveOption === 'custom'
-                              ? 'bg-amber-50/60 border-amber-400 shadow-md'
-                              : 'bg-white border-grey-200 hover:border-grey-300'
+                            effectiveOption === 'custom' ? 'bg-amber-50/60 border-amber-400 shadow-md' : 'bg-white border-grey-200 hover:border-grey-300'
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider block w-fit mb-1">
-                                Bayar Sendiri
-                              </span>
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider block w-fit mb-1">Bayar Sendiri</span>
                               <h5 className="font-extrabold text-sm text-wellme-primary">Nominal Sendiri</h5>
-                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">
-                                Masukkan jumlah yang ingin Anda bayar terlebih dahulu.
-                              </p>
+                              <p className="text-[11px] text-grey-400 font-semibold leading-snug mt-0.5">Masukkan jumlah yang ingin Anda bayar terlebih dahulu.</p>
                             </div>
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${
-                              effectiveOption === 'custom' ? 'border-amber-500 bg-amber-500 text-white' : 'border-grey-300'
-                            }`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 ${effectiveOption === 'custom' ? 'border-amber-500 bg-amber-500 text-white' : 'border-grey-300'}`}>
                               {effectiveOption === 'custom' && <span className="text-xs font-bold">✓</span>}
                             </div>
                           </div>
 
-                          {/* Input — only interactive when selected */}
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="border-t border-grey-200/60 pt-3 flex flex-col gap-2"
-                          >
-                            <label className="text-[10px] font-bold text-grey-400 uppercase tracking-wide">
-                              Jumlah Pembayaran Pertama <span className="text-red-500">*</span>
-                            </label>
+                          <div onClick={(e) => e.stopPropagation()} className="border-t border-grey-200/60 pt-3 flex flex-col gap-2">
+                            <label className="text-[10px] font-bold text-grey-400 uppercase tracking-wide">Jumlah Pembayaran Pertama <span className="text-red-500">*</span></label>
                             <div className="relative">
                               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-grey-400 pointer-events-none">Rp</span>
                               <input
@@ -1778,40 +1747,20 @@ function ApplyPageContent() {
                                 value={formData.custom_payment_amount}
                                 disabled={effectiveOption !== 'custom'}
                                 onChange={(e) => {
-                                  // Only allow digits
                                   const digits = e.target.value.replace(/[^0-9]/g, "");
-                                  // Format with thousand separator
                                   const formatted = digits ? parseInt(digits, 10).toLocaleString('id-ID') : "";
                                   setFormData((prev) => ({ ...prev, custom_payment_amount: formatted }));
                                 }}
-                                onClick={() => setFormData((prev) => ({ ...prev, payment_option: 'custom' }))}
                                 className={`w-full pl-10 pr-4 py-3 border rounded-xl text-sm font-bold focus:outline-none transition-all ${
-                                  effectiveOption === 'custom'
-                                    ? 'border-amber-400 focus:border-amber-500 text-wellme-primary bg-white'
-                                    : 'border-grey-150 text-grey-300 bg-slate-50 cursor-not-allowed'
+                                  effectiveOption === 'custom' ? 'border-amber-400 focus:border-amber-500 text-wellme-primary bg-white' : 'border-grey-150 text-grey-300 bg-slate-50 cursor-not-allowed'
                                 }`}
                               />
                             </div>
-
-                            {/* Live remaining balance hint */}
                             {effectiveOption === 'custom' && rawCustom > 0 && rawCustom <= fullAmount && (
-                              <p className="text-[11px] font-semibold text-grey-400">
-                                Sisa{" "}
-                                <span className="font-extrabold text-wellme-primary">
-                                  Rp {remainingCustom.toLocaleString('id-ID')}
-                                </span>{" "}
-                                akan dibayarkan nanti.
-                              </p>
+                              <p className="text-[11px] font-semibold text-grey-400">Sisa <span className="font-extrabold text-wellme-primary">Rp {remainingCustom.toLocaleString('id-ID')}</span> akan dibayarkan nanti.</p>
                             )}
                             {effectiveOption === 'custom' && rawCustom > fullAmount && (
-                              <p className="text-[11px] font-bold text-red-500">
-                                ⚠️ Nominal melebihi total harga (Rp {fullAmount.toLocaleString('id-ID')})
-                              </p>
-                            )}
-                            {effectiveOption === 'custom' && rawCustom === fullAmount && rawCustom > 0 && (
-                              <p className="text-[11px] font-semibold text-green-600">
-                                ✓ Sama dengan pelunasan penuh.
-                              </p>
+                              <p className="text-[11px] font-bold text-red-500">⚠️ Nominal melebihi total harga (Rp {fullAmount.toLocaleString('id-ID')})</p>
                             )}
                           </div>
                         </div>
@@ -1819,19 +1768,6 @@ function ApplyPageContent() {
                     </div>
                   );
                 })()}
-
-                <div className="flex items-start gap-3 mt-4 border border-grey-150 p-4 rounded-2xl bg-wellme-100/10">
-                  <input
-                    type="checkbox"
-                    id="declarationAccepted"
-                    checked={formData.declarationAccepted}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, declarationAccepted: e.target.checked }))}
-                    className="w-5 h-5 accent-wellme-primary mt-0.5 cursor-pointer"
-                  />
-                  <label htmlFor="declarationAccepted" className="text-xs text-grey-400 font-semibold leading-relaxed cursor-pointer select-none">
-                    Saya menyatakan bahwa data yang diisi di atas adalah <strong>benar</strong> dan saya bersedia dihubungi oleh tim administrasi Allia Kids.
-                  </label>
-                </div>
               </div>
             )}
 
