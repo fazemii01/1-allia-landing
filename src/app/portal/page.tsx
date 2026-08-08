@@ -670,14 +670,28 @@ export default function PortalOrangTua() {
                                   (selectedProgramFilter === "all" || l.program_name === selectedProgramFilter || child.jenis_terapi === selectedProgramFilter)
                               );
 
+                        const getLogScore = (l: any) => {
+                          if (l?.progress_score && Number(l.progress_score) > 0) return Number(l.progress_score);
+                          if (l?.aspect_scores) {
+                            const asp = l.aspect_scores;
+                            const vals = [asp.atensi_fokus, asp.artikulasi_wicara, asp.regulasi_emosi, asp.kepatuhan_instruksi, asp.sosialisasi].filter(
+                              (v: any) => typeof v === 'number' && v > 0
+                            );
+                            if (vals.length > 0) {
+                              return Math.round(vals.reduce((a: number, b: number) => a + b, 0) / vals.length);
+                            }
+                          }
+                          return 80;
+                        };
+
                         const latestLog = childLogs.length > 0 ? childLogs[childLogs.length - 1] : null;
                         const totalSesi = latestLog?.total_sessions || 8;
                         const completedSesi = childLogs.length;
                         const percentSesi = Math.min(100, Math.round((completedSesi / totalSesi) * 100));
                         const avgScore = childLogs.length > 0 
-                          ? Math.round(childLogs.reduce((acc, l) => acc + (l.progress_score || 0), 0) / childLogs.length)
+                          ? Math.round(childLogs.reduce((acc: number, l: any) => acc + getLogScore(l), 0) / childLogs.length)
                           : 0;
-                        const aspect = latestLog?.aspect_scores || null;
+                        const aspect = latestLog?.aspect_scores || {};
 
                         return (
                           <div key={child.id} className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-6 print:border-none print:shadow-none print:p-0 print:mb-12">
@@ -764,7 +778,9 @@ export default function PortalOrangTua() {
                                 <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">Rata-Rata Evaluation Score</span>
                                 <div className="flex items-baseline gap-2">
                                   <span className="text-3xl font-black text-emerald-700">{avgScore}%</span>
-                                  <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Sangat Baik</span>
+                                  <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                    {avgScore >= 80 ? "Sangat Baik" : avgScore >= 60 ? "Baik" : "Cukup"}
+                                  </span>
                                 </div>
                                 <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
                                   <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${avgScore}%` }} />
