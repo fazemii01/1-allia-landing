@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import LocationMapSection from "@/components/LocationMapSection";
 
 export default function AboutPage() {
   return (
@@ -134,6 +135,9 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* Location & Google Maps Section */}
+        <LocationMapSection />
 
         {/* CTA Section */}
         <section className="container mx-auto px-4 lg:px-10 py-16 lg:py-20 text-center">

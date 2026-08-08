@@ -118,7 +118,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ token:
 
         {/* Print Button — hidden on print */}
         <div className="flex justify-end mb-4 print:hidden">
-          <PrintButton />
+          <PrintButton invoice={invoice} />
         </div>
 
         {/* Invoice Card */}

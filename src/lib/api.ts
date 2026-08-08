@@ -244,12 +244,17 @@ export interface BannerItem {
   href?: string;
   sort_order: number;
   is_active: boolean;
+  type?: string;
+  title?: string;
+  popup_delay?: number;
 }
 
 export const bannersApi = {
-  getAll: (): Promise<BannerItem[]> =>
-    request('/banners', { next: { revalidate: 60 } }),
+  getAll: (type?: string): Promise<BannerItem[]> =>
+    request(type ? `/banners?type=${type}` : '/banners', { next: { revalidate: 60 } }),
 };
+
+export const bannerApi = bannersApi;
 
 // ─── Partnerships (Public) ──────────────────────────────────────────────────
 

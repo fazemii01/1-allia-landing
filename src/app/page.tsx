@@ -8,11 +8,16 @@ import AppsSection from "@/components/AppsSection";
 import GallerySection from "@/components/GallerySection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ArticlesSection from "@/components/ArticlesSection";
+import LocationMapSection from "@/components/LocationMapSection";
+import PopUpBannerModal from "@/components/PopUpBannerModal";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen w-full bg-white">
+      {/* Automatic Pop-Up Banner Modal */}
+      <PopUpBannerModal />
+
       {/* Header and Navigation */}
       <Navbar />
 
@@ -38,6 +43,9 @@ export default function Home() {
 
         {/* Latest Parenting Articles Preview */}
         <ArticlesSection />
+
+        {/* Google Maps Location Section */}
+        <LocationMapSection />
 
         {/* App promotion and Premium Info */}
         <AppsSection />

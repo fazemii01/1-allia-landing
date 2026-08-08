@@ -137,7 +137,7 @@ export default function Login() {
             <div className="text-center mt-4">
               <p className="text-xs text-grey-400 font-semibold">
                 Belum memiliki akun?{" "}
-                <Link href="/register" className="text-wellme-primary font-bold hover:underline">
+                <Link href="/apply" className="text-wellme-primary font-bold hover:underline">
                   Daftar di sini
                 </Link>
               </p>

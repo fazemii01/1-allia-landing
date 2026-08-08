@@ -15,7 +15,7 @@ export default function HeroSlider() {
     async function fetchBanners() {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:9000';
-        const res = await fetch(`${apiUrl}/api/banners`);
+        const res = await fetch(`${apiUrl}/api/banners?type=hero`);
         if (!res.ok) throw new Error("Gagal mengambil data banner");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
@@ -26,7 +26,7 @@ export default function HeroSlider() {
               .replace('http://storage.alliago.id', 'https://storage.alliago.id');
           };
           const mapped = data
-            .filter((b: any) => b.is_active)
+            .filter((b: any) => b.is_active && (b.type === 'hero' || !b.type))
             .map((b: any) => ({
               href: b.href || '#',
               bgImage: normalizeUrl(b.image_url),
